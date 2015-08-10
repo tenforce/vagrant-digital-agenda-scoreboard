@@ -1,0 +1,8 @@
+127.0.0.1	digital-agenda-data.eu www.digital-agenda-data.eu 
+127.0.0.1 	virtuoso.scoreboard.edw.ro # Virtuoso Management 
+127.0.0.1 	virtuoso.scoreboardtest.edw.ro # Virtuoso Management Testing
+127.0.0.1	cr.scoreboardtest.edw.ro
+127.0.0.1	semantic.digital-agenda-data.eu
+127.0.0.1	test.digital-agenda-data.eu # Visualisation website
+127.0.0.1	test-cr.digital-agenda-data.eu # Content Registry
+127.0.0.1	test-virtuoso.digital-agenda-data.eu # OpenLink Virtuoso
