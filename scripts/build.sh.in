@@ -1,0 +1,160 @@
+#!/bin/sh
+
+set -x 
+export PATH="/usr/local/bin:$PATH"
+export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
+
+# First Check a bunch of installs are correct for this script
+
+hash java 2>/dev/null || { echo >&2 "java is required.  Aborting."; exit 1; }
+hash pip2.7 2>/dev/null || { echo >&2 "pip2.7 is required.  Aborting."; exit 1; }
+hash python2.7 2>/dev/null || { echo >&2 "python2.7 is required.  Aborting."; exit 1; }
+hash mvn 2>/dev/null || { echo >&2 "maven is required.  Aborting."; exit 1; }
+
+# Main installs 
+
+install_scoreboard() {
+    export PATH="/usr/local/bin:$PATH"    
+    curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python2.7 -
+    pip install virtualenv
+    pip install setuptools --upgrade
+
+    adduser scoreboard 
+    mkdir -p /var/local/plone-scoreboard
+    chown scoreboard:scoreboard /var/local/plone-scoreboard -R
+
+    cd /var/local/plone-scoreboard
+    git clone https://github.com/eaudeweb/scoreboard.buildout.git scoreboard.buildout
+    git clone https://github.com/eaudeweb/scoreboard.buildout.git scoreboard.buildout.test
+
+    echo "############# plone config files"
+    chown scoreboard:scoreboard /var/local/plone-scoreboard -R
+    cp /vagrant/scripts/plone-scoreboard-base.cfg scoreboard.buildout.test/base.cfg
+    cp /vagrant/scripts/plone-versions-4.3.cfg scoreboard.buildout.test/plone-versions-4.3.cfg
+
+    cp /vagrant/scripts/plone-scoreboard-base.cfg scoreboard.buildout/base.cfg
+    cp /vagrant/scripts/plone-versions-4.3.cfg scoreboard.buildout/plone-versions-4.3.cfg
+    chown scoreboard:scoreboard /var/local/plone-scoreboard -R
+
+    # Now build the production (using production.cfg)
+    cd scoreboard.buildout
+    su -c "virtualenv ." scoreboard
+    su -c "source bin/activate ; \
+           bin/python2.7 bootstrap.py -c production.cfg ; \
+           bin/buildout -c production.cfg" scoreboard
+    cd ..
+
+    # cd var/filestorage/ 
+    # Not accessible on the server.
+    # wget http://scoreboardtest.edw.ro/download/Data.fs.gz
+    # wget http://scoreboardtest.edw.ro/download/filestorage.tar.gz
+    # wget http://scoreboardtest.edw.ro/download/blobstorage.tar.gz
+
+    # gunzip Data.fs.gz
+    # tar xf filestorage.tar.gz
+    # tar xf blobstorage.tar.gz
+
+    # Now build the test setup (using test.cfg)
+    cd scoreboard.buildout.test
+    su -c "virtualenv ." scoreboard
+    su -c "source bin/activate ; \
+           bin/python2.7 bootstrap.py -c test.cfg ; \
+           bin/buildout -c test.cfg" scoreboard
+
+    # Testable by accessing -  http://localhost:8440/Plone
+    chown scoreboard:scoreboard /var/local/plone-scoreboard -R
+    echo "Update http/service config files for scoreboard"
+    cp /vagrant/config-files/scoreboard-init /etc/init.d/scoreboard
+    cp /vagrant/config-files/scoreboard.conf /etc/httpd/conf.d/scoreboard.conf
+    cp /vagrant/config-files/httpd.conf /etc/httpd/conf/httpd.conf
+    cp /vagrant/config-files/ssl.conf /etc/httpd/conf.d/ssl.conf
+    rm -rf  /var/local/scoreboard  /var/local/scoreboardtest
+    # mkdir -p /var/local/scoreboard
+    # mkdir -p /var/local/scoreboardtest
+    ln -s /var/local/scoreboard /var/www/html/scoreboard
+    ln -s /var/local/scoreboardtest /var/www/html/scoreboardtest
+}
+
+# 2.1.2.3 (openlink Virtuoso)
+
+install_virtuoso() {
+    echo "Installing Virtuoso stable/6 in $WORKDIR"
+    cd $WORKDIR
+    git clone --branch=stable/6 git://github.com/openlink/virtuoso-opensource.git 
+    # Create the two Data Directories
+    mkdir -p /var/local/virtuoso/var/lib/virtuoso/ontowiki
+    mkdir -p /var/local/virtuoso/var/lib/virtuoso/test
+    pushd virtuoso-opensource
+     pwd ; ./autogen.sh
+     ./configure --prefix=/var/local/virtuoso --with-readline
+     make ; make install
+     # Everything should be where it is supposed to be - update config files
+     cp /vagrant/config-files/virtuoso-init /etc/init.d/virtuoso
+     cp /vagrant/config-files/virtuoso-test-init /etc/init.d/virtuosotest
+     cp /vagrant/config-files/virtuoso.ini /var/local/virtuoso/var/lib/virtuoso/ontowiki
+     cp /vagrant/config-files/virtuosotest.ini /var/local/virtuoso/var/lib/virtuoso/test
+    popd
+}
+
+# 2.1.2.4
+
+install_cr() {
+    export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+    mkdir -p /var/local/cr/build
+    mkdir -p /var/local/crtest/build
+    pushd /var/local/cr/build/
+     if [ ! -d "eionet.contreg" ] 
+     then
+	git clone --branch=digital-agenda-scoreboard https://github.com/eea/eionet.contreg.git
+     fi
+    popd
+    pushd /var/local/cr/build/eionet.contreg
+     cp /vagrant/config-files/eionet.contreg-local.properties local.properties
+     mvn -Dmaven.test.skip=true clean install
+     # Copy the files to the tomcat webapps directory
+     cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/
+     # Make sure tomcat permissions allow inspection
+     cp /vagrant/config-files/tomcat-users.xml /etc/tomcat6
+     # Create the database connection ....
+     pushd sql/virtuoso/install
+      # Assuming virtuoso has been place where needed (and started)
+      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 1_create_users.sql
+      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 2_setup_full_text_indexing.sql
+      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 3_create_schema.sql
+      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 4_enforce_inferene_rules.sql
+      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 5_initial_data.sql
+      cp /var/local/cr/build/eionet.contreg/lib/virtuoso/virtjdbc/3.0/virtjdbc-3.0.jar /usr/share/tomcat6/lib
+     popd
+    popd
+}
+
+# ELDA
+install_elda() {
+    mkdir -p /var/local/Elda_standalone_1.2.27 # was 27
+    pushd /var/local/Elda_standalone_1.2.27
+      # Install and update the elda software
+      wget https://elda.googlecode.com/files/elda-standalone-1.2.27.jar
+      mkdir -p elda_standalone_1.2.27  # Underscore is deliberate
+      pushd elda_standalone_1.2.27
+       jar xf ../elda-standalone-1.2.27.jar
+       # Update the configuration files
+       cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
+       git clone https://github.com/eaudeweb/scoreboard.elda.git
+       chmod 777 logs
+       mkdir -p webapps/ROOT/specs
+       mkdir -p webapps/ROOT/WEB-INF/lib
+       cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/ROOT/WEB-INF/lib
+       cp scoreboard.elda/scoreboard.ttl webapps/ROOT/specs/scoreboard.ttl
+       cp scoreboard.elda/web.xml webapps/ROOT/WEB-INF/web.xml
+    popd
+}
+
+# Install virtuoso first - should be standard
+install_virtuoso
+service virtuoso start
+
+install_scoreboard;
+install_cr;
+install_elda
+

@@ -1,0 +1,117 @@
+#!/bin/bash
+####################################################################################
+# Based on deployment guide (start services needed)
+
+TYPE=production
+PLONESCOREBOARD=
+export ZOPE=Zope2-2.13.19-py2.7.egg
+export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
+export ELDAVERSION=1.2.27
+export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
+export PATH="/usr/local/bin:$PATH"
+
+# Plone/Daviz (production)
+#  Load Balancing
+
+load_balance_production() {
+    echo "Start Load Balancing Production"
+    service scoreboard restart
+    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/bin/supervisord &" scoreboard
+    # /var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/bin/zeo fg &
+    # /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-build/sbin/pound -f /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-config/etc/pound.cfg -p /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-config/var/pound.pid &
+    sleep 20
+}
+
+# Zope (3 instances)
+zope_production() {
+    echo "Start Zope Production"
+    # Should all be started by the scoreboard/supervisord
+    #
+    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance1/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance1/etc/zope.conf &" scoreboard
+    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance2/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance2/etc/zope.conf &" scoreboard
+    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance3/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance3/etc/zope.conf &" scoreboard
+    sleep 10;
+}
+
+# Plone/Daviz (test)
+load_balance_test() {
+    echo "Start Load Balancing testing - nothing to do"
+}
+
+zope_test() {
+    echo "Start Zope - testing"
+    su -c "/var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/etc/zope.conf &" scoreboard
+    su -c "/var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/zdaemon-4.0.0-py2.7.egg/zdaemon/zdrun.py -S /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/zopeschema.xml -b 10 -d -s /var/local/plone-scoreboard/scoreboard.buildout.test/var/instance/zopectlsock -x 0,2 -z /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance /var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/etc/zope.conf &" scoreboard
+}
+
+# Memcached (production)
+memcached_production() {
+    echo "Stat memcached - production"
+    /var/local/plone-scoreboard/scoreboard.buildout/parts/memcached/bin/memcached -d -u scoreboard -P /var/local/plone-scoreboard/scoreboard.buildout/parts/memcached/memcached.pid -p 11210 -m 8192 &
+}
+
+# Memcached (test)
+memcached_test() {
+    echo "Stat memcached - test"
+    /var/local/plone-scoreboard/scoreboard.buildout.test/parts/memcached/bin/memcached -d -u scoreboard -P /var/local/plone-scoreboard/scoreboard.buildout.test/parts/memcached/memcached.pid -p 11211 -m 1024 &
+}
+
+# Virtuoso (production)
+virtuoso_production() {
+    echo "Stat virtuoso - production"
+    service virtuoso restart
+    # /var/local/virtuoso/bin/virtuoso-t +configfile /var/local/virtuoso/var/lib/virtuoso/ontowiki/virtuoso.ini &
+    sleep 10
+}
+
+# Virtuoso (test)
+virtuoso_test() {
+    echo "Stat virtuoso - test"
+    service virtuosotest restart
+    # /var/local/virtuoso/bin/virtuoso-t +configfile /var/local/virtuoso/var/lib/virtuoso/test/virtuosotest.ini &
+    sleep 10
+}
+
+# Content Registry (production)
+content_registry_production() {
+    echo "Stat content repository - production"
+    service tomcat6 restart
+    # java -Djava.util.logging.config.file=/var/local/cr/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx2048m -Djava.endorsed.dirs=/var/local/cr/apache-tomcat-6.0.36/endorsed -classpath /var/local/cr/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/cr/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/cr/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/cr/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
+}
+
+# Content Registry (test)
+content_registry_test() {
+    echo "Stat content repository - test"
+    # service tomcat6 restart
+    java -Djava.util.logging.config.file=/var/local/crtest/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx1024m -Djava.endorsed.dirs=/var/local/crtest/apache-tomcat-6.0.36/endorsed -classpath /var/local/crtest/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/crtest/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/crtest/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/crtest/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
+}
+
+# Elda Standalone Package
+
+elda_test() {
+    echo "Start EDLA - testing"
+    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
+    sleep 10
+}
+
+elda_production() {
+    echo "Start EDLA - production /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION}"
+    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
+    sleep 10
+}
+
+# Start all the required services
+
+start_processes() {
+    service httpd restart
+    virtuoso_${TYPE};
+    load_balance_${TYPE}; 
+    memcached_${TYPE};
+    content_registry_${TYPE};
+    zope_${TYPE};
+    elda_${TYPE}
+}
+
+echo "start all processes"
+start_processes
+

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export WORKDIR=/tmp
+export PATH=".:./scripts:$PATH"
+
+# das-install.sh
+
+export PATH="/usr/local/bin:$PATH"
+export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+
+build.sh
+processes.sh
