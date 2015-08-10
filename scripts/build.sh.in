@@ -71,10 +71,10 @@ install_scoreboard() {
     cp /vagrant/config-files/httpd.conf /etc/httpd/conf/httpd.conf
     cp /vagrant/config-files/ssl.conf /etc/httpd/conf.d/ssl.conf
     rm -rf  /var/local/scoreboard  /var/local/scoreboardtest
-    # mkdir -p /var/local/scoreboard
-    # mkdir -p /var/local/scoreboardtest
     ln -s /var/local/scoreboard /var/www/html/scoreboard
     ln -s /var/local/scoreboardtest /var/www/html/scoreboardtest
+    mkdir -p /var/local/scoreboard
+    mkdir -p /var/local/scoreboardtest
 }
 
 ###########################################################################

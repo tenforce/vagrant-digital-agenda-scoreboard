@@ -1,20 +1,28 @@
-#+TITLE: VagrantDigitalAgendaScoreboard
+#+TITLE: Vagrant-Digital-Agenda-Scoreboard
 
 * Introduction 
-This Vagrant description is for a virtualbox wihich runs centos 6.5.
-It has installed:
+This Vagrant description is for a virtualbox running Centos 6.5,
+which has as development environment view of the digital agenda
+scoreboard production environment.
+
+It is being put together in the context of the Open Data Support
+project as a demonstration.
 
 * Deployment steps
-  1. Vagrant installed
-  2. check out the git repository
-  3. startup vagrant
-  4. login to the system
+On the host machine:
+  - install virtualbox and vagrant,
+  - check out this git repository,
+  - vagrant up (See starting up vagrant below)
+On the vagrant machine
+  - login to the system
        user:vagrant/vagrant
        note credentials Virtuoso are dba/dba
-  5. cd /vagrant
-  6. ./configure
-  7. sudo WORKDIR=/tmp scripts/setup.sh
-
+  - cd /vagrant
+  - Generate the SSL certificate to be used.
+       http://www.akadia.com/services/ssh_test_certificate.html
+  - autoconf ; ./configure
+  - sudo WORKDIR=/tmp scripts/setup.sh
+    
 ** Vagrant installation
   See https://www.vagrantup.com/
   Also install VirtualBox
@@ -30,7 +38,7 @@ It has installed:
   git clone <URI>
 #+END_SRC
 
-** Startup Vagrant
+** Starting up Vagrant
 #+BEGIN_SRC bash
 vagrant plugin install vagrant-vbguest
     # Which will install the virtualbox guest additions
@@ -47,7 +55,15 @@ vagrant up
 vagrant halt
 vagrant up
 #+END_SRC
-
+* Testing
+- Tomcat
+- Virtuoso Sparql Endpoint
+- Virtuoso Conductor
+- Apache
+- CR
+- Plone
+- Elda
 * Problems
-  - Initial config
+** Plone - not yet working
+** Elda - not yet working
   
