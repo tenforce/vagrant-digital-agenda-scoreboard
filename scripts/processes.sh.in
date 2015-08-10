@@ -1,117 +1,109 @@
 #!/bin/bash
-####################################################################################
-# Based on deployment guide (start services needed)
+#######################################################################
+# Intention is to install all DAS components as described in the
+# deployment guide.
 
-TYPE=production
-PLONESCOREBOARD=
-export ZOPE=Zope2-2.13.19-py2.7.egg
-export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
-export ELDAVERSION=1.2.27
-export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
-export PATH="/usr/local/bin:$PATH"
+# rpmforge (gperf)
 
-# Plone/Daviz (production)
-#  Load Balancing
+wget http://dag.wieers.com/rpm/packages/RPM-GPG-KEY.dag.txt
+rpm --import RPM-GPG-KEY.dag.txt
+wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+yum -y install dkms
+# epel
 
-load_balance_production() {
-    echo "Start Load Balancing Production"
-    service scoreboard restart
-    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/bin/supervisord &" scoreboard
-    # /var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/bin/zeo fg &
-    # /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-build/sbin/pound -f /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-config/etc/pound.cfg -p /var/local/plone-scoreboard/scoreboard.buildout/parts/pound-config/var/pound.pid &
-    sleep 20
+yum -y install gcc gmake autoconf automake libtool flex \
+       bison gperf gawk m4 make openssl-devel readline-devel wget
+
+yum -y install openssl supervisor memcached zope plone postfix \
+       libffi-devel libxslt-devel pound zeo
+
+####################################################################
+# Some metioned specifics
+yum -y install git libffi-devel libxslt-devel curl mod_ssl
+
+####################################################################
+# Install maven
+install_maven2() {
+    wget http://archive.apache.org/dist/maven/binaries/apache-maven-2.0.10-bin.tar.gz
+    tar xvf apache-maven-2.0.10-bin.tar.gz
+    cp -r apache-maven-2.0.10 /opt
+    export PATH=/opt/apache-maven-2.0.10/bin:$PATH
 }
 
-# Zope (3 instances)
-zope_production() {
-    echo "Start Zope Production"
-    # Should all be started by the scoreboard/supervisord
-    #
-    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance1/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance1/etc/zope.conf &" scoreboard
-    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance2/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance2/etc/zope.conf &" scoreboard
-    # su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/python /var/local/plone-scoreboard/scoreboard.buildout/parts/instance3/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout/parts/instance3/etc/zope.conf &" scoreboard
-    sleep 10;
+####################################################################
+# Update libevent (Python was complaining with expected version)
+install_libevent() {
+    wget http://downloads.sourceforge.net/levent/libevent-2.0.21-stable.tar.gz
+    tar xvf libevent-2.0.21-stable.tar.gz
+    pushd libevent-2.0.21-stable
+    ./configure --prefix=/usr --disable-static && make && make install
+    popd
 }
 
-# Plone/Daviz (test)
-load_balance_test() {
-    echo "Start Load Balancing testing - nothing to do"
+####################################################################
+# Update the Twisted module
+install_twisted() {
+    wget https://pypi.python.org/packages/source/T/Twisted/Twisted-15.3.0.tar.bz2
+    tar jxvf Twisted-15.3.0.tar.bz2
+    pushd Twisted-15.3.0
+    python2.7 setup.py install
+    popd
 }
 
-zope_test() {
-    echo "Start Zope - testing"
-    su -c "/var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/etc/zope.conf &" scoreboard
-    su -c "/var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/zdaemon-4.0.0-py2.7.egg/zdaemon/zdrun.py -S /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/zopeschema.xml -b 10 -d -s /var/local/plone-scoreboard/scoreboard.buildout.test/var/instance/zopectlsock -x 0,2 -z /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance /var/local/plone-scoreboard/scoreboard.buildout.test/bin/python /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/bin/interpreter /var/local/plone-scoreboard/scoreboard.buildout.test/eggs/Zope2-2.13.19-py2.7.egg/Zope2/Startup/run.py -C /var/local/plone-scoreboard/scoreboard.buildout.test/parts/instance/etc/zope.conf &" scoreboard
+####################################################################
+# Install Java/Tomcat 
+install_java_tomcat() {
+    yum -y install yum-priorities
+    yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel maven2
+    yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
 }
 
-# Memcached (production)
-memcached_production() {
-    echo "Stat memcached - production"
-    /var/local/plone-scoreboard/scoreboard.buildout/parts/memcached/bin/memcached -d -u scoreboard -P /var/local/plone-scoreboard/scoreboard.buildout/parts/memcached/memcached.pid -p 11210 -m 8192 &
+####################################################################
+# Install the 2.7.8 version of Python
+
+install_python_2_7() {
+    echo "Installing Python 2.7"
+    # http://bicofino.io/blog/2014/01/16/installing-python-2-dot-7-6-on-centos-6-dot-5/
+    yum install -y zlib-devel bzip2-devel openssl-devel xz-libs wget
+    cd /tmp
+    wget http://www.python.org/ftp/python/2.7.8/Python-2.7.8.tar.xz
+    xz -d Python-2.7.8.tar.xz
+    tar -xvf Python-2.7.8.tar
+    # Enter the directory:
+    cd Python-2.7.8
+    # Run the configure:
+    ./configure --prefix=/usr/local
+    export PATH="/usr/local/bin:$PATH"
+    # compile and install it:
+    make ; make altinstall
+
+    # Setup tools
+    cd /tmp
+    wget --no-check-certificate https://pypi.python.org/packages/source/s/setuptools/setuptools-1.4.2.tar.gz
+
+    # Extract the files:
+    tar -xvf setuptools-1.4.2.tar.gz
+    cd setuptools-1.4.2
+
+    # Install setuptools using the Python 2.7.8:
+    /usr/local/bin/python2.7 setup.py install
+    curl https://raw.githubusercontent.com/pypa/pip/master/contrib/get-pip.py | /usr/local/bin/python2.7 -
+    pip2.7 install virtualenv
+    pip2.7 install setuptools==2.1
+    echo "done installing python 2.7"
 }
 
-# Memcached (test)
-memcached_test() {
-    echo "Stat memcached - test"
-    /var/local/plone-scoreboard/scoreboard.buildout.test/parts/memcached/bin/memcached -d -u scoreboard -P /var/local/plone-scoreboard/scoreboard.buildout.test/parts/memcached/memcached.pid -p 11211 -m 1024 &
-}
+####################################################################
+# Install the needed parts
 
-# Virtuoso (production)
-virtuoso_production() {
-    echo "Stat virtuoso - production"
-    service virtuoso restart
-    # /var/local/virtuoso/bin/virtuoso-t +configfile /var/local/virtuoso/var/lib/virtuoso/ontowiki/virtuoso.ini &
-    sleep 10
-}
-
-# Virtuoso (test)
-virtuoso_test() {
-    echo "Stat virtuoso - test"
-    service virtuosotest restart
-    # /var/local/virtuoso/bin/virtuoso-t +configfile /var/local/virtuoso/var/lib/virtuoso/test/virtuosotest.ini &
-    sleep 10
-}
-
-# Content Registry (production)
-content_registry_production() {
-    echo "Stat content repository - production"
-    service tomcat6 restart
-    # java -Djava.util.logging.config.file=/var/local/cr/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx2048m -Djava.endorsed.dirs=/var/local/cr/apache-tomcat-6.0.36/endorsed -classpath /var/local/cr/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/cr/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/cr/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/cr/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
-}
-
-# Content Registry (test)
-content_registry_test() {
-    echo "Stat content repository - test"
-    # service tomcat6 restart
-    java -Djava.util.logging.config.file=/var/local/crtest/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx1024m -Djava.endorsed.dirs=/var/local/crtest/apache-tomcat-6.0.36/endorsed -classpath /var/local/crtest/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/crtest/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/crtest/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/crtest/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
-}
-
-# Elda Standalone Package
-
-elda_test() {
-    echo "Start EDLA - testing"
-    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
-    sleep 10
-}
-
-elda_production() {
-    echo "Start EDLA - production /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION}"
-    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
-    sleep 10
-}
-
-# Start all the required services
-
-start_processes() {
-    service httpd restart
-    virtuoso_${TYPE};
-    load_balance_${TYPE}; 
-    memcached_${TYPE};
-    content_registry_${TYPE};
-    zope_${TYPE};
-    elda_${TYPE}
-}
-
-echo "start all processes"
-start_processes
-
+install_java_tomcat
+install_maven2
+install_libevent
+# install_base_python_tools
+if ! hash python2.7 2>/dev/null; then
+    install_python_2_7
+else
+    echo "Python2.7 already installed"
+fi
+install_twisted

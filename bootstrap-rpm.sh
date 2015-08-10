@@ -17,7 +17,7 @@ yum -y groupinstall "Graphics Creation Tools"
 # Check boot init (change to graphical)
 sed -i -e 's/:3:/:5:/g' /etc/inittab
 
-# Install decent editor
+# Install decent editor and some other obvious bits
 yum --enablerepo rpmforge install dkms
 yum -y install kernel-devel-`uname -r` kernel-headers-`uname -r`
 yum -y install kernel-devel kernel-headers

@@ -4,8 +4,6 @@
 This Vagrant description is for a virtualbox wihich runs centos 6.5.
 It has installed:
 
-- Iceweasal (web-browser)
-  
 * Deployment steps
   1. Vagrant installed
   2. check out the git repository
