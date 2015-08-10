@@ -10,7 +10,7 @@ project as a demonstration.
 
 * Deployment steps
 On the host machine:
-  - install virtualbox and vagrant,
+  - install virtualbox and vagrant (See Below)
   - check out this git repository,
   - vagrant up (See starting up vagrant below)
 On the vagrant machine
@@ -19,16 +19,23 @@ On the vagrant machine
        note credentials Virtuoso are dba/dba
   - cd /vagrant
   - Generate the SSL certificate to be used.
-       http://www.akadia.com/services/ssh_test_certificate.html
-  - autoconf ; ./configure
-  - sudo WORKDIR=/tmp scripts/setup.sh
+    - A good description on how to to this can be found here:
+      http://www.akadia.com/services/ssh_test_certificate.html
+  - Regenerate the configuration files, etc. using the command:
+    - ( autoconf ; ./configure )
+  - Inatll extra software, build the components and start the various
+    services, using the command:
+     - sudo WORKDIR=/tmp scripts/setup.sh
     
-** Vagrant installation
-  See https://www.vagrantup.com/
-  Also install VirtualBox
+** Installation Setup
+The two main components to install are:
+- install VirtualBox
+- install Vagrant (https://www.vagrantup.com/)
+
 *** Windows users
-    Make 
+Make 
 *** Mac OS users
+
 
 ** GitHub support
 *** Windows users
@@ -37,6 +44,7 @@ On the vagrant machine
 #+BEGIN_SRC bash
   git clone <URI>
 #+END_SRC
+
 
 ** Starting up Vagrant
 #+BEGIN_SRC bash
