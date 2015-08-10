@@ -1,0 +1,51 @@
+#+TITLE: VagrantDigitalAgendaScoreboard
+
+* Introduction 
+This Vagrant description is for a virtualbox wihich runs ubuntu
+precise64.  It has installed:
+
+- Iceweasal (web-browser)
+  
+* Deployment steps
+  1. Vagrant installed
+  2. check out the git repository
+  3. startup vagrant
+  4. login to the system
+       user:vagrant/vagrant
+       note credentials Virtuoso are dba/root
+** Vagrant installation
+  See https://www.vagrantup.com/
+  Also install VirtualBox
+*** Windows users
+    Make 
+*** Mac OS users
+
+** GitHub support
+*** Windows users
+  Install git-bash ()
+  
+#+BEGIN_SRC bash
+  git clone <URI>
+#+END_SRC
+
+** Startup Vagrant
+#+BEGIN_SRC bash
+vagrant plugin install vagrant-vbguest
+    # Which will install the virtualbox guest additions
+    # allowing full screen for this virtualbox.
+vagrant up
+    # Which will make sure the interface is accessible
+    # It will download the ISO image, and 
+    # then will download all necessary packages
+    # 
+    # Estimated activation time depends on network download speed, but on a
+    # high speed connection is approximately 15 minutes.
+   
+   # restart the system (ensuring GUI properly accessible)
+vagrant halt
+vagrant up
+#+END_SRC
+
+* Problems
+  - Initial config
+  
