@@ -29,22 +29,13 @@ On the vagrant machine
     
 ** Installation Setup
 The two main components to install are:
-- install VirtualBox
-- install Vagrant (https://www.vagrantup.com/)
+- install VirtualBox - 5.0.0 (https://www.virtualbox.org)
+- install Vagrant - 1.7.4 (https://www.vagrantup.com/)
 
 *** Windows users
-Make 
+This are being developed using the above under windows 7.0
+ 
 *** Mac OS users
-
-
-** GitHub support
-*** Windows users
-  Install git-bash ()
-  
-#+BEGIN_SRC bash
-  git clone <URI>
-#+END_SRC
-
 
 ** Starting up Vagrant
 #+BEGIN_SRC bash
