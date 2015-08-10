@@ -1,0 +1,27 @@
+#!/bin/sh
+start() {
+	#restart virtuoso-test
+	cd /var/local/virtuoso/var/lib/virtuoso/test
+	su -c "/var/local/virtuoso/bin/virtuoso -t +configfile /var/local/virtuoso/var/lib/virtuoso/test/virtuosotest.ini" scoreboard
+}
+
+stop() {
+	echo "stop"
+	process=`ps ax | grep "/test/virtuosotest.ini" | awk '{print $1}'`
+	kill -9 $process
+}
+
+case "$1" in
+
+start)
+	start ;;
+stop)
+	stop ;;
+restart)
+	stop 
+	start ;;
+*)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 2
+esac
+exit $?

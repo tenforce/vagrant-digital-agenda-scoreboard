@@ -1,0 +1,29 @@
+#!/bin/sh
+start() {
+    # restart plone-scoreboard
+    echo "start plone-scoreboard"
+    su -c "/var/local/plone-scoreboard/scoreboard.buildout/bin/supervisord" scoreboard
+}
+
+stop() {
+    echo "stop plone-scoreboard"
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+    start)
+	start $1 ;;
+    stop)
+	stop $1 ;;
+    restart)
+	stop
+	start $1 ;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 2
+esac	
+exit $?
