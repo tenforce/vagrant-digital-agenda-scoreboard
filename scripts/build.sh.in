@@ -134,22 +134,22 @@ install_cr() {
 ###########################################################################
 # ELDA
 install_elda() {
-    mkdir -p /var/local/Elda_standalone_1.2.27 # was 27
-    pushd /var/local/Elda_standalone_1.2.27
+    mkdir -p /var/local/Elda_standalone_1.2.16 # was 16
+    pushd /var/local/Elda_standalone_1.2.16
       # Install and update the elda software
-      wget https://elda.googlecode.com/files/elda-standalone-1.2.27.jar
-      mkdir -p elda_standalone_1.2.27  # Underscore is deliberate
-      pushd elda_standalone_1.2.27
-       jar xf ../elda-standalone-1.2.27.jar
+      wget https://elda.googlecode.com/files/elda-standalone-1.2.16.jar
+      mkdir -p elda_standalone_1.2.16  # Underscore is deliberate
+      pushd elda_standalone_1.2.16
+       jar xf ../elda-standalone-1.2.16.jar
        # Update the configuration files
        cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
        git clone https://github.com/eaudeweb/scoreboard.elda.git
        chmod 777 logs
-       mkdir -p webapps/ROOT/specs
-       mkdir -p webapps/ROOT/WEB-INF/lib
-       cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/ROOT/WEB-INF/lib
-       cp scoreboard.elda/scoreboard.ttl webapps/ROOT/specs/scoreboard.ttl
-       cp scoreboard.elda/web.xml webapps/ROOT/WEB-INF/web.xml
+       mkdir -p webapps/root/specs
+       mkdir -p webapps/root/WEB-INF/lib
+       cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
+       cp scoreboard.elda/scoreboard.ttl webapps/root/specs/scoreboard.ttl
+       cp scoreboard.elda/web.xml webapps/root/WEB-INF/web.xml
     popd
 }
 
