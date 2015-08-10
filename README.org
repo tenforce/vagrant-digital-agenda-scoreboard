@@ -1,8 +1,8 @@
 #+TITLE: VagrantDigitalAgendaScoreboard
 
 * Introduction 
-This Vagrant description is for a virtualbox wihich runs ubuntu
-precise64.  It has installed:
+This Vagrant description is for a virtualbox wihich runs centos 6.5.
+It has installed:
 
 - Iceweasal (web-browser)
   
@@ -12,7 +12,11 @@ precise64.  It has installed:
   3. startup vagrant
   4. login to the system
        user:vagrant/vagrant
-       note credentials Virtuoso are dba/root
+       note credentials Virtuoso are dba/dba
+  5. cd /vagrant
+  6. ./configure
+  7. sudo WORKDIR=/tmp scripts/setup.sh
+
 ** Vagrant installation
   See https://www.vagrantup.com/
   Also install VirtualBox
