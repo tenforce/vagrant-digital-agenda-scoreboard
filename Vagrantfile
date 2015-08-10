@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
   # config.vm.box = "http://www.lyricalsoftware.com/downloads/centos65.box"
   config.vm.box = "box-cutter/centos65-desktop"
   config.vm.provision :shell, path: "bootstrap-rpm.sh"
-  config.vm.synced_folder "OpenData", "/vagrant_opendata"
+  # config.vm.synced_folder "OpenData", "/vagrant_opendata"
   config.vm.synced_folder ".", "/vagrant"
   config.ssh.insert_key = false
   config.vm.boot_timeout = 500
