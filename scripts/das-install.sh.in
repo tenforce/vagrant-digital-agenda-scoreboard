@@ -12,14 +12,13 @@ rpm -Uvh rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 yum -y install dkms
 # epel
 
-yum -y install gcc gmake autoconf automake libtool flex \
-       bison gperf gawk m4 make openssl-devel readline-devel wget
+yum -y install libtool gperf openssl-devel readline-devel
 
-yum -y install openssl supervisor memcached zope plone postfix \
-       git libffi-devel libxslt-devel pound zeo
+yum -y install supervisor memcached zope plone postfix \
+       libffi-devel libxslt-devel pound zeo
 
 # Specifics
-yum -y install git libffi-devel libxslt-devel curl mod_ssl
+yum -y install libffi-devel libxslt-devel mod_ssl
 
 # Install maven
 install_maven2() {
@@ -56,7 +55,7 @@ install_base_python_tools() {
 # Install Java/Tomcat 
 install_java_tomcat() {
     yum -y install yum-priorities
-    yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel maven2
+    yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
     yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
 }
 

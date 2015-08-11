@@ -39,9 +39,10 @@ install_scoreboard() {
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
 
     # Now build the production (using production.cfg)
+    echo "***** build scoreboard (production)"
     cd scoreboard.buildout
-    su -c "virtualenv ." scoreboard
-    su -c "source bin/activate ; \
+    su -c "/usr/local/bin/virtualenv . ;\
+           source bin/activate ; \
            bin/python2.7 bootstrap.py -c production.cfg ; \
            bin/buildout -c production.cfg" scoreboard
     cd ..
@@ -58,8 +59,8 @@ install_scoreboard() {
 
     # Now build the test setup (using test.cfg)
     cd scoreboard.buildout.test
-    su -c "virtualenv ." scoreboard
-    su -c "source bin/activate ; \
+    su -c "/usr/local/bin/virtualenv . ;\
+           source bin/activate ; \
            bin/python2.7 bootstrap.py -c test.cfg ; \
            bin/buildout -c test.cfg" scoreboard
 
@@ -135,7 +136,7 @@ install_cr() {
 ###########################################################################
 # ELDA
 install_elda() {
-    mkdir -p /var/local/Elda_standalone_1.2.16 # was 16
+    mkdir -p /var/local/Elda_standalone_1.2.16 # was 27
     pushd /var/local/Elda_standalone_1.2.16
       # Install and update the elda software
       wget https://elda.googlecode.com/files/elda-standalone-1.2.16.jar
@@ -150,6 +151,7 @@ install_elda() {
        mkdir -p webapps/root/WEB-INF/lib
        cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
        cp scoreboard.elda/scoreboard.ttl webapps/root/specs/scoreboard.ttl
+       cp scoreboard.elda/scoreboard.ttl webapps/elda/specs/scoreboard.ttl
        cp scoreboard.elda/web.xml webapps/root/WEB-INF/web.xml
     popd
 }

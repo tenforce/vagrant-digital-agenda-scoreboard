@@ -6,7 +6,7 @@ TYPE=production
 PLONESCOREBOARD=
 export ZOPE=Zope2-2.13.19-py2.7.egg
 export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
-export ELDAVERSION=1.2.27
+export ELDAVERSION=1.2.16
 export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
 export PATH="/usr/local/bin:$PATH"
 
