@@ -19,8 +19,8 @@ sed -i -e 's/:3:/:5:/g' /etc/inittab
 
 # Install decent editor and some other obvious bits
 yum --enablerepo rpmforge install dkms
-yum -y install kernel-devel-`uname -r` kernel-headers-`uname -r`
 yum -y install kernel-devel kernel-headers
+yum -y install kernel-devel-`uname -r` kernel-headers-`uname -r`
 yum -y install dos2unix firefox emacs
 yum -y install emacs autoconf
 

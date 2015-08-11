@@ -118,6 +118,7 @@ install_cr() {
      cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/
      # Make sure tomcat permissions allow inspection
      cp /vagrant/config-files/tomcat-users.xml /etc/tomcat6
+     cp /vagrant/config-files/tomcat-server.xml /etc/tomcat6
      # Create the database connection ....
      pushd sql/virtuoso/install
       # Assuming virtuoso has been place where needed (and started)
