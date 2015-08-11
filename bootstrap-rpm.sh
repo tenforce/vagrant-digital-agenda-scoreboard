@@ -27,4 +27,6 @@ yum -y install gcc gmake autoconf automake flex openssl git
 
 #################################################################
 # finishing and cleaning up.
+dos2unix scripts/*.in
+dos2unix config-files/*
 echo "****** done with bootstrap of Digital Agenda Test machine"
