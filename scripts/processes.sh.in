@@ -6,9 +6,9 @@ TYPE=production
 PLONESCOREBOARD=
 export ZOPE=Zope2-2.13.19-py2.7.egg
 export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
-export ELDAVERSION=1.2.16
+export ELDAVERSION=1.2.21
 export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
-export PATH="/usr/local/bin:$PATH"
+export PATH="$JAVA_HOME/bin:/usr/local/bin:$PATH"
 
 # Plone/Daviz (production)
 #  Load Balancing
@@ -77,13 +77,19 @@ content_registry_test() {
 
 elda_test() {
     echo "Start EDLA - testing"
-    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
+    ( cd /var/local/elda ; java -jar start.jar )
     sleep 10
 }
 
 elda_production() {
-    echo "Start EDLA - production /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION}"
-    ( cd /var/local/Elda_standalone_${ELDAVERSION}/elda_standalone_${ELDAVERSION} ; java -jar start.jar )
+    echo "Start EDLA - production /var/local/elda ${ELDAVERSION}"
+    # export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
+    # export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
+    # export PATH="$JAVA_HOME/bin:/usr/local/bin:$PATH"
+    echo $PATH 
+    echo $JAVA_HOME
+    java -version
+    ( cd /var/local/elda ; java -jar start.jar )
     sleep 10
 }
 

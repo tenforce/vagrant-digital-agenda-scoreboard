@@ -4,6 +4,7 @@ set -x
 export PATH="/usr/local/bin:$PATH"
 export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
 export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
+export PATH="$JAVA_HOME/bin:$PATH"
 
 ###########################################################################
 # First Check a bunch of installs are correct for this script
@@ -136,23 +137,19 @@ install_cr() {
 ###########################################################################
 # ELDA
 install_elda() {
-    mkdir -p /var/local/Elda_standalone_1.2.16 # was 27
-    pushd /var/local/Elda_standalone_1.2.16
+    mkdir -p /var/local/elda
+    pushd /var/local/elda
       # Install and update the elda software
-      wget https://elda.googlecode.com/files/elda-standalone-1.2.16.jar
-      mkdir -p elda_standalone_1.2.16  # Underscore is deliberate
-      pushd elda_standalone_1.2.16
-       jar xf ../elda-standalone-1.2.16.jar
-       # Update the configuration files
-       cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
-       git clone https://github.com/eaudeweb/scoreboard.elda.git
-       chmod 777 logs
-       mkdir -p webapps/root/specs
-       mkdir -p webapps/root/WEB-INF/lib
-       cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
-       cp scoreboard.elda/scoreboard.ttl webapps/root/specs/scoreboard.ttl
-       cp scoreboard.elda/scoreboard.ttl webapps/elda/specs/scoreboard.ttl
-       cp scoreboard.elda/web.xml webapps/root/WEB-INF/web.xml
+      wget https://elda.googlecode.com/files/elda-standalone-1.2.21.jar
+      jar xf elda-standalone-1.2.21.jar
+      chmod 777 logs
+      # Update the configuration files
+      cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
+      # git clone https://github.com/eaudeweb/scoreboard.elda.git
+      # cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
+      cp /vagrant/config-files/elda-scoreboard.ttl webapps/elda/specs/scoreboard.ttl
+      cp /vagrant/config-files/elda-web.xml webapps/elda/WEB-INF/web.xml
+      cp /vagrant/config-files/elda-index.html webapps/elda/WEB-INF/index.html
     popd
 }
 

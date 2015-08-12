@@ -1,0 +1,895 @@
+#<http://purl.org/linked-data/sdmx#>
+# Elda config for DIgital Agenda Scoreboard Project.
+#
+
+# Assorted prefix declarations. Some of them are for the structuring
+# of the API config, others are for the vocabulary definitions.
+#
+
+@prefix api:                <http://purl.org/linked-data/api/vocab#> .
+@prefix dc:		  		        <http://purl.org/dc/terms/> .
+@prefix eu:                 <http://ec.europa.eu/open-data/ontologies/ec-odp#> .
+@prefix terms:              <http://www.w3.org/ns/dcat#> .
+@prefix adms:               <http://www.w3.org/ns/adms#> .
+@prefix qb:                 <http://purl.org/linked-data/cube#> .
+@prefix sdmx:               <http://purl.org/linked-data/sdmx#> .
+@prefix measure:            <http://purl.org/linked-data/sdmx/2009/measure#> .
+
+@prefix rdf:                <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:               <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:                <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:               <http://www.w3.org/2004/02/skos/core#> .
+@prefix semprop:            <http://semantic.digital-agenda-data.eu/def/property/> .
+
+# The elda namespace/prefix is for Elda extensions to the LDA specification.
+@prefix elda:               <http://www.epimorphics.com/vocabularies/lda#> .
+
+# Prefix for example-local entities.
+@prefix spec:				<http://localhost:8082/> . #elda/vocabulary/>.
+
+@prefix hig:				<http://www.hans-im-glueck.de/> .
+
+
+#The selector for all datasets
+spec:datasetSelector a api:selector
+  ; api:where
+    """
+    ?item rdf:type qb:DataSet .
+    FILTER regex(str(?item),\"^http://semantic.digital-agenda-data.eu/dataset\")
+    """
+  .
+
+#The selector for all objects that are skos:inScheme
+spec:defSchemeSelector a api:selector
+  ; api:where
+    """
+    {
+    SELECT DISTINCT ?item
+    WHERE
+    {
+      {
+        ?item ?p1 <http://semantic.digital-agenda-data.eu/def/scheme> .
+        ?item ?p ?o .
+        FILTER regex(str(?item),\"^http://semantic.digital-agenda-data.eu/def\")
+      }
+      UNION
+      {
+        ?item ?p ?o .
+        FILTER(?item = <http://semantic.digital-agenda-data.eu/def/scheme>)
+      }
+    }
+    }
+    """
+  .
+
+#The primitive selector for Observations in a datasets
+spec:obsSelector a api:selector
+  ; api:where
+    """
+    ?item qb:dataSet ?d .
+    FILTER (regex(str(?d),?obsDSRegex)).
+    """
+  .
+
+#The selector for all the Observations in a specific dataset
+spec:obsDSSelector a api:selector
+  ; api:where
+    """
+    ?item rdf:type qb:Observation .
+    ?item qb:dataSet ?d .
+    FILTER (regex(str(?d),?obsDSRegex)).
+    """
+  .
+
+#The selector for all the Observations in a specific dataset, having a specific indicator
+spec:obs1propSelector a api:selector
+  ; api:parent spec:obsSelector
+  ; api:where
+    """
+    ?item semprop:indicator ?i .
+    FILTER (regex(str(?i),?notRegex)) .
+    """
+  .
+
+#The selector for all the Observations in a specific dataset, having specified
+#indicator and breakdown
+spec:obs2propSelector a api:selector
+  ; api:parent spec:obsSelector
+  ; api:where
+    """
+    ?item semprop:indicator ?i .
+    FILTER (regex(str(?i),?notRegex)) .
+    ?item semprop:breakdown ?b .
+    FILTER (regex(str(?b), ?bkRegex)) .
+    """
+ .
+
+#The selector for all the Observations in a specific dataset, having specified
+#indicator, breakdown and unit-measure
+spec:obs3propSelector a api:selector
+  ; api:parent spec:obsSelector
+  ; api:where
+    """
+    ?item semprop:indicator ?i .
+    FILTER (regex(str(?i),?notRegex)) .
+    ?item semprop:breakdown ?b .
+    FILTER (regex(str(?b), ?bkRegex)) .
+    ?item semprop:unit-measure ?u .
+    FILTER (regex(str(?u), ?umRegex)) .
+    """
+  .
+
+#The selector for all the Observations in a specific dataset, having specified
+#indicator, breakdown, unit-measure and ref-area
+spec:obs4propSelector a api:selector
+  ; api:parent spec:obs3propSelector
+  ; api:parent spec:obsSelector
+  ; api:where
+    """
+    ?item semprop:ref-area ?r .
+    FILTER (regex(str(?r), ?refRegex)) .
+    """
+  .
+
+#The selector for all the Observations in a specific dataset, having specified
+#indicator, breakdown, unit-measure, ref-area and time period
+spec:obs5propSelector a api:selector
+  ; api:parent spec:obs4propSelector
+  ; api:parent spec:obs3propSelector
+  ; api:parent spec:obsSelector
+  ; api:where
+    """
+    ?item semprop:time-period ?t .
+    FILTER (regex(str(?t), ?timeRegex)) .
+    """
+  .
+
+#The selector for all observations
+spec:dataSelector a api:selector
+  ; api:filter "Type=Observation"
+  .
+
+#The selector for Data Structure Definitions
+spec:defDSDSelector a api:selector
+  ; api:filter "Type=DataStructureDefinition"
+  .
+
+#The selector for all the codelists
+spec:codelistSelector a api:selector
+  ; api:filter "Type=Codelist"
+  .
+
+#The seelctor for all unit measures
+spec:umSelector a api:selector
+  ; api:where
+    """
+    {
+      SELECT DISTINCT ?item
+      WHERE
+      {
+        ?item ?p ?o .
+        FILTER (?item = <http://semantic.digital-agenda-data.eu/codelist/unit-measure>)
+      }
+    }
+    UNION
+    {
+      ?item rdf:type  <http://semantic.digital-agenda-data.eu/def/class/UnitMeasure>
+    }
+    """
+  .
+
+#
+#The selector for all indicator groups
+spec:indgroupsSelector a api:selector
+  ; api:where
+    """
+    {
+      SELECT DISTINCT ?item
+      WHERE
+      {
+        ?item ?p ?o .
+        FILTER (?item = <http://semantic.digital-agenda-data.eu/codelist/indicator-group>)
+      }
+    }
+    UNION
+    {
+      ?item rdf:type <http://semantic.digital-agenda-data.eu/def/class/IndicatorGroup>
+    }
+    """
+  .
+
+#The selector for all the indicators
+spec:indicatorsSelector a api:selector
+  ; api:where
+    """
+    {
+      SELECT DISTINCT ?item
+      WHERE
+      {
+        ?item ?p ?o .
+        FILTER (?item = <http://semantic.digital-agenda-data.eu/codelist/indicator>)
+      }
+    }
+    UNION
+    {
+      ?item rdf:type <http://semantic.digital-agenda-data.eu/def/class/Indicator>
+    }
+    """
+  .
+
+#The selector for all the objects in a group
+spec:ingroupSelector a api:selector
+  ; api:where
+    """
+    ?item semprop:membership ?who .
+    ?who semprop:member-of ?group .
+    FILTER (regex(str(?group),?idRegex))
+    """
+ .
+
+#The selector for all breakdown groups
+spec:bkgroupsSelector a api:selector
+  ; api:where
+    """
+    {
+      SELECT DISTINCT ?item
+      WHERE
+      {
+        ?item ?p ?o .
+        FILTER (?item = <http://semantic.digital-agenda-data.eu/codelist/breakdown-group>)
+       }
+    }
+    UNION
+    {
+      ?item rdf:type <http://semantic.digital-agenda-data.eu/def/class/BreakdownGroup>
+    }
+    """
+  .
+
+#The selector for all the breakdowns
+spec:breakdownsSelector a api:selector
+  ; api:where
+    """
+    {
+      SELECT DISTINCT ?item
+      WHERE
+      {
+        ?item ?p ?o .
+        FILTER (?item = <http://semantic.digital-agenda-data.eu/codelist/breakdown>) .
+      }
+    }
+    UNION
+    {
+      ?item rdf:type <http://semantic.digital-agenda-data.eu/def/class/Breakdown>
+    }
+    """
+  .
+
+#Views
+
+spec:viewerShort a api:Viewer
+  ; api:name "short"
+  ; api:properties
+    "Title,Description,Type,Issued,Modified,Identifier,Keyword,ContractPoint"
+    , "Status,Structure,License,Publisher,Distribution,AccrualPeriodicity"
+  .
+
+spec:viewerScheme a api:Viewer
+  ; api:name "scheme"
+  ; api:properties
+    "Type,Label,InScheme,Range,Notation,Concept,Comment"
+    , "SubclassOf,SeeAlso,SubPropertyOf,CodeList,GroupedUsing"
+  .
+
+spec:viewerDSD a api:Viewer
+  ; api:name "dsd"
+  ; api:properties "Type,PrimaryMeasure,Component"
+  .
+
+spec:viewerDefDSD a api:Viewer
+  ; api:name "defdsd"
+  ; api:properties "Type,Attribute,Dimension,DimensionGroup,Measure"
+  .
+
+spec:viewerData a api:Viewer
+  ; api:name "data"
+  ; api:properties
+    "Type,DataSet,UnitMeasure,Indicator,TimePeriod,RefArea"
+    , "Breakdown,ObservationValue,Note"
+  .
+
+spec:viewerCodelist a api:Viewer
+  ; api:name "codelist"
+  ; api:properties
+    "Type,Label,SeeAlso,HasTopConcept,Notation,PrefLabel,Definition,Note"
+  .
+
+spec:viewerCodelists a api:Viewer
+  ; api:name "codelists"
+  ; api:properties
+    "Type,SeeAlso,HasTopConcept,Notation,PrefLabel,Definition,Note,AltLabel"
+    , "TopConceptOf,Modified,IsDefinedBy,InScheme,SemanticOrder,Membership.MemberOf"
+  .
+
+spec:viewerUnitMeasure a api:Viewer
+  ; api:name "unit-measures"
+  ; api:properties
+    "Type,Notation,PrefLabel,AltLabel,Definition,TopConceptOf,Modified"
+    , "IsDefinedBy,SeeAlso,HasTopConcept"
+  .
+
+spec:viewerIndGroups a api:Viewer
+  ; api:name "ind-groups"
+  ; api:properties
+    "Type,Modified,IsDefinedBy,Notation,PrefLabel,HasTopConcept,InScheme"
+    , "TopConceptOf,SemanticOrder,Membership.MemberOf"
+  .
+
+spec:viewerBreakdown a api:Viewer
+  ; api:name "breakdown"
+  ; api:properties
+    "Type,Modified,IsDefinedBy,Notation,PrefLabel,HasTopConcept,InScheme"
+    , "SeeAlso,AltLabel,TopConceptOf,Membership.MemberOf"
+  .
+
+spec:viewerTP a api:Viewer
+  ; api:name "timeperiod"
+  ; api:properties
+    "Type,Modified,IsDefinedBy,Notation,PrefLabel,HasTopConcept,InScheme"
+  .
+
+spec:viewerProperty a api:Viewer
+  ; api:name "property"
+  ; api:properties
+    "Type,Label,Comment,Range,Domain,Notation,Concept,CodeList,SubPropertyOf"
+    , "InScheme,GroupedUsing"
+  .
+
+spec:viewerClass a api:Viewer
+  ; api:name "class"
+  ; api:properties
+    "Type,Label,SubclassOf,SeeAlso,InScheme"
+  .
+
+spec:viewerConcept a api:Viewer
+  ; api:name "concept"
+  ; api:properties
+    "Type,Label,Comment,SeeAlso,InScheme"
+  .
+
+spec:viewerDistribution a api:Viewer
+  ; api:name "distribution"
+  ; api:properties
+    "Type,Label,Format,DCFormat.Label,AccessURL"
+  .
+#
+# API config
+
+spec:scoreboard-api a api:API
+	; rdfs:label "Scoreboard API -- "@en
+  #The SPARQL endpoint
+	; api:sparqlEndpoint <http://digital-agenda-data.eu/sparql>
+  #<http://virtuoso.scoreboardtest.edw.ro/sparql>
+ 	; api:maxPageSize 50
+  ; api:defaultPageSize 10
+  #The default viewer  (DESCRIBE plus labels to all resources)
+  ; api:defaultViewer api:labelledDescribeViewer
+  #The default formatter
+	; api:defaultFormatter spec:HtmlFormatter
+ 	; api:endpoint spec:dataset
+    , spec:datasets
+    , spec:defScheme
+    , spec:defDSD
+    , spec:DSD
+    , spec:property
+    , spec:class
+    , spec:concept
+    , spec:dimension
+    , spec:attribute
+    , spec:measure
+    , spec:data
+    , spec:obsDS
+    , spec:obs1PROP
+    , spec:obs2PROP
+    , spec:obs3PROP
+    , spec:obs4PROP
+    , spec:obs5PROP
+    , spec:distribution
+    , spec:codelist
+    , spec:unitMeasures
+    , spec:unitMeasure
+    , spec:indGroups
+    , spec:indGroup
+    , spec:indicators
+    , spec:indicator
+    , spec:bkGroups
+    , spec:bkGroup
+    , spec:breakdowns
+    , spec:breakdown
+    , spec:timePeriod
+	.
+
+<http://digital-agenda-data.eu/data/sparql> elda:supportsNestedSelect true.
+#Endpoint definition
+#List all datasets
+
+spec:datasets a api:ListEndpoint
+  ; api:label "Datasets"
+  ; api:uriTemplate "/dataset"
+  ; api:selector spec:datasetSelector
+  ; api:defaultViewer spec:viewerShort
+  .
+#Describe a single dataset
+
+spec:dataset a api:ItemEndpoint
+  ; rdfs:label "Dataset"
+  ; api:uriTemplate "/dataset/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/dataset/{id}"
+  ; api:defaultViewer spec:viewerShort
+  .
+
+#List all objects that are skos:inScheme
+
+spec:defScheme a api:ListEndpoint
+  ; rdfs:label "DefScheme"
+  ; api:uriTemplate "/def/scheme"
+  ; api:selector spec:defSchemeSelector
+  ; api:defaultViewer spec:viewerScheme
+  .
+
+#List all data structure definitions
+
+spec:defDSD a api:ListEndpoint
+  ; rdfs:label "DefDSD"
+  ; api:uriTemplate "/def/dsd"
+  ; api:selector spec:defDSDSelector
+  ; api:defaultViewer spec:viewerDSD
+  .
+
+#Describe a single DSD
+
+spec:DSD a api:ItemEndpoint
+  ; rdfs:label "DSD"
+  ; api:uriTemplate "/def/dsd/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/dsd/{id}"
+  ; api:defaultViewer spec:viewerDSD
+  .
+
+#Describe a def/property
+
+spec:property a api:ItemEndpoint
+  ; rdfs:label "property"
+  ; api:uriTemplate "/def/property/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/property/{id}"
+  ; api:defaultViewer spec:viewerProperty
+  .
+
+#Describe a def/class
+
+spec:class a api:ItemEndpoint
+  ; rdfs:label "class"
+  ; api:uriTemplate "/def/class/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/class/{id}"
+  ; api:defaultViewer spec:viewerClass
+  .
+
+#Describe a concept
+
+spec:concept a api:ItemEndpoint
+  ; rdfs:label "concept"
+  ; api:uriTemplate "/def/concept/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/concept/{id}"
+  ; api:defaultViewer spec:viewerConcept
+  .
+
+#Describe a dsd/dimension
+
+spec:dimension a api:ItemEndpoint
+  ; rdfs:label "dimension"
+  ; api:uriTemplate "/def/dsd/{id1}/dimension/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/dsd/{id1}/dimension/{id}"
+  ; api:defaultViewer spec:viewerDefDSD
+  .
+
+#Describe a dsd/attribute
+
+spec:attribute a api:ItemEndpoint
+  ; rdfs:label "attribute"
+  ; api:uriTemplate "/def/dsd/{id}/attribute/{att}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/dsd/{id}/attribute/{att}"
+  ; api:defaultViewer spec:viewerDefDSD
+  .
+
+#Describe a dsd/measure
+
+spec:measure a api:ItemEndpoint
+  ; rdfs:label "measure"
+  ; api:uriTemplate "/def/dsd/{id}/measure"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/def/dsd/{id}/measure"
+  ; api:defaultViewer spec:viewerDefDSD
+  .
+
+#List all Observations
+
+spec:data a api:ListEndpoint
+  ; rdfs:label "Data"
+  ; api:uriTemplate "/data"
+  ; api:selector spec:dataSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset
+
+spec:obsDS a api:ListEndpoint
+  ; rdf:label "ObsFromDataset"
+  ; api:uriTemplate "/data/{ds}"
+  ; api:variable [ api:name "obsDSRegex"; api:value "^http://semantic.digital-agenda-data.eu/dataset/{ds}"]
+  ; api:selector spec:obsDSSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset having a specified indicator
+
+spec:obs1PROP a api:ListEndpoint
+  ; rdf:label "Obs1Prop"
+  ; api:uriTemplate "/data/{ds}/{not}"
+  ; api:variable [ api:name "obsDSRegex"; api:value "^http://semantic.digital-agenda-data.eu/dataset/{ds}"]
+  ; api:variable [ api:name "notRegex"; api:value "^http://semantic.digital-agenda-data.eu/codelist/indicator/{not}"]
+  ; api:selector spec:obs1propSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset having specified indicator and breakdown
+
+spec:obs2PROP a api:ListEndpoint
+  ; rdf:label "Obs2Prop"
+  ; api:uriTemplate "/data/{ds}/{not}/{breakdown}"
+  ; api:variable [
+      api:name "obsDSRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/dataset/{ds}$"
+    ]
+  ; api:variable [
+      api:name "notRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/indicator/{not}$"
+      ]
+  ; api:variable [
+         api:name "bkRegex";
+         api:value "^http://semantic.digital-agenda-data.eu/codelist/breakdown/{breakdown}$"
+    ]
+  ; api:selector spec:obs2propSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset having specified indicator, breakdown and
+#unit-measure
+
+spec:obs3PROP a api:ListEndpoint
+  ; rdf:label "Obs3Prop"
+  ; api:uriTemplate "/data/{ds}/{not}/{breakdown}/{um}"
+  ; api:variable [
+      api:name "obsDSRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/dataset/{ds}$"
+    ]
+
+  ; api:variable [
+      api:name "notRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/indicator/{not}$"
+    ]
+  ; api:variable [
+      api:name "bkRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/breakdown/{breakdown}$"
+    ]
+  ; api:variable [
+        api:name "umRegex";
+        api:value "^http://semantic.digital-agenda-data.eu/codelist/unit-measure/{um}$"
+    ]
+  ; api:selector spec:obs3propSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset having specified indicator, breakdown
+#unit-measure and ref-area
+
+spec:obs4PROP a api:ListEndpoint
+  ; rdf:label "Obs4Prop"
+  ; api:uriTemplate "/data/{ds}/{not}/{breakdown}/{um}/{ref}"
+  ; api:variable [
+      api:name "obsDSRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/dataset/{ds}$"
+    ]
+  ; api:variable [
+      api:name "notRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/indicator/{not}$"
+    ]
+  ; api:variable [
+      api:name "bkRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/breakdown/{breakdown}$"
+    ]
+  ; api:variable [
+      api:name "umRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/unit-measure/{um}$"
+    ]
+  ; api:variable [
+      api:name "refRegex";
+      api:value "^http://eurostat.linked-statistics.org/dic/geo#{ref}$";
+    ]
+  ; api:selector spec:obs4propSelector
+  ; api:defaultViewer spec:viewerData
+  .
+
+#List all observations from a dataset having specified indicator, breakdown
+#unit-measure, ref-area and time-period
+
+spec:obs5PROP a api:ItemEndpoint
+  ; rdf:label "Observations5Properties"
+  ; api:uriTemplate "/data/{ds}/{not}/{breakdown}/{um}/{ref}/{year}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/data/{ds}/{not}/{breakdown}/{um}/{ref}/{year}"
+  ; api:defaultViewer spec:viewerData
+  .
+
+#Describe a dataset distribution
+
+spec:distribution a api:ItemEndpoint
+  ; rdf:label "distribution"
+  ; api:uriTemplate "/dataset/{id}/distribution"
+  ; api:itemTemplate  "http://semantic.digital-agenda-data.eu/dataset/{id}/distribution"
+  ; api:defaultViewer spec:viewerDistribution
+  .
+
+#List all codelists
+
+spec:codelist a api:ListEndpoint
+  ; rdf:label "Codelists"
+  ; api:uriTemplate "/codelist"
+  ; api:selector spec:codelistSelector
+  ; api:defaultViewer spec:viewerCodelist
+  .
+
+#List all unit measures
+
+spec:unitMeasures a api:ListEndpoint
+  ; rdf:label "UnitMeasures"
+  ; api:uriTemplate "/codelist/unit-measure"
+  ; api:selector spec:umSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#Describe a unit measure
+
+spec:unitMeasure a api:ItemEndpoint
+  ; rdf:label "UnitMeasure"
+  ; api:uriTemplate "/codelist/unit-measure/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/codelist/unit-measure/{id}"
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#List all indicator groups
+
+spec:indGroups a api:ListEndpoint
+  ; rdf:label "IndicatorGroups"
+  ; api:uriTemplate "/codelist/indicator-group"
+  ; api:selector spec:indgroupsSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#List all indicators in group
+
+spec:indGroup a api:ListEndpoint
+  ; rdf:label "IndicatorGroup"
+  ; api:uriTemplate "/codelist/indicator-group/{id}"
+  ; api:variable [
+      api:name "idRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/indicator-group/{id}$"
+    ]
+  ; api:selector spec:ingroupSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#List all indicators
+spec:indicators a api:ListEndpoint
+  ; rdf:label "Indicators"
+  ; api:uriTemplate "/codelist/indicator"
+  ; api:selector spec:indicatorsSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+
+#Describe a single indicator
+
+spec:indicator a api:ItemEndpoint
+  ; rdf:label "Indicator"
+  ; api:uriTemplate "/codelist/indicator/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/codelist/indicator/{id}"
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#List all breakdown grooups
+
+spec:bkGroups a api:ListEndpoint
+  ; rdf:label "BreakdownGroups"
+  ; api:uriTemplate "/codelist/breakdown-group"
+  ; api:selector spec:bkgroupsSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#List all breakdowns in a breakdown group
+
+spec:bkGroup a api:ListEndpoint
+  ; rdf:label "BreakdownGroup"
+  ; api:uriTemplate "/codelist/breakdown-group/{id}"
+  ; api:variable [
+      api:name "idRegex";
+      api:value "^http://semantic.digital-agenda-data.eu/codelist/breakdown-group/{id}$"
+    ]
+  ; api:selector spec:ingroupSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+
+#List all breakdowns
+
+spec:breakdowns a api:ListEndpoint
+  ; rdf:label "breakdown"
+  ; api:uriTemplate "/codelist/breakdown"
+  ; api:selector spec:breakdownsSelector
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#Describe a single breakdown
+
+spec:breakdown a api:ItemEndpoint
+  ; rdf:label "breakdown"
+  ; api:uriTemplate "/codelist/breakdown/{id}"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/codelist/breakdown/{id}"
+  ; api:defaultViewer spec:viewerCodelists
+  .
+
+#Describe codelist/time-period
+
+spec:timePeriod a api:ItemEndpoint
+  ; rdf:label "time-period"
+  ; api:uriTemplate "/codelist/time-period"
+  ; api:itemTemplate "http://semantic.digital-agenda-data.eu/codelist/time-period"
+  ; api:defaultViewer spec:viewerTP
+  .
+
+#
+# This XSLT formatter produces rich HTML from the viewer properties.
+#
+
+spec:HtmlFormatter a api:XsltFormatter
+	; api:name "html"
+	; api:mimeType "text/html; charset=utf-8"
+	; api:stylesheet "lda-assets/xslt/result-osm-trimmed.xsl"
+	.
+
+
+#
+# Vocabulary definitions
+#
+
+rdf:Property api:label "Property" .
+
+rdf:type api:label "Type"
+  ; api:multiValued true
+  ; rdfs:range rdfs:Class
+  .
+
+rdfs:label api:label "Label" .
+
+rdfs:range api:label "Range" .
+
+rdfs:comment api:label "Comment" .
+
+rdfs:subClassOf api:label "SubclassOf" .
+
+rdfs:subPropertyOf api:label "SubPropertyOf" .
+
+rdfs:seeAlso api:label "SeeAlso" .
+
+rdfs:isDefinedBy api:label "IsDefinedBy" .
+
+rdfs:domain api:label "Domain" .
+
+dc:issued api:label "Issued" .
+
+dc:modified api:label "Modified" .
+
+dc:description api:label "Description" .
+
+dc:identifier api:label "Identifier" .
+
+dc:title api:label "Title" .
+
+dc:accrualPeriodicity api:label "AccrualPeriodicity" .
+
+dc:license api:label "License" .
+
+dc:publisher api:label "Publisher" .
+
+dc:format api:label "DCFormat" .
+
+eu:keyword api:label "Keyword" .
+
+eu:contractpoint api:label "ContractPoint" .
+
+eu:format api:label "Format" .
+
+adms:status api:label "Status" .
+
+qb:structure api:label "Structure" .
+
+qb:concept api:label "Concept" .
+
+qb:codeList api:label "CodeList" .
+
+qb:component api:label "Component"
+  ; api:multiValued true
+  ; rdfs:range rdfs:Class
+  .
+
+qb:dataSet api:label "DataSet" .
+
+qb:Observation api:label "Observation" .
+
+qb:order api:label "Order" .
+
+qb:dimension api:label "Dimension" .
+
+qb:attribute api:label "Attribute" .
+
+qb:measure api:label "Measure" .
+
+terms:distribution api:label "Distribution" .
+
+terms:accessURL api:label "AccessURL" .
+
+skos:inScheme api:label "InScheme" .
+
+skos:notation api:label "Notation" .
+
+skos:prefLabel api:label "PrefLabel" .
+
+skos:altLabel api:label "AltLabel" .
+
+skos:definition api:label "Definition" .
+
+skos:topConceptOf api:label "TopConceptOf" .
+
+skos:hasTopConcept api:label "HasTopConcept" .
+
+semprop:grouped-using api:label "GroupedUsing" .
+
+semprop:unit-measure
+  a rdf:Property
+  ; api:label "UnitMeasure"
+  .
+
+semprop:indicator api:label "Indicator" .
+
+semprop:time-period api:label "TimePeriod" .
+
+semprop:ref-area api:label "RefArea" .
+
+semprop:breakdown api:label "Breakdown" .
+
+semprop:order api:label "SemanticOrder" .
+
+semprop:membership
+  api:label "Membership"
+  ; rdfs:range rdfs:Resource
+  .
+
+semprop:member-of api:label "MemberOf" .
+
+semprop:note api:label "Note" .
+
+semprop:dimension-group api:label "DimensionGroup" .
+
+sdmx:DataStructureDefinition api:label "DataStructureDefinition" .
+
+sdmx:primaryMeasure api:label "PrimaryMeasure" .
+
+sdmx:CodeList api:label "Codelist" .
+
+measure:obsValue api:label "ObservationValue" .
