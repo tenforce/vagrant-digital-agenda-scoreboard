@@ -25,7 +25,7 @@
 @prefix elda:               <http://www.epimorphics.com/vocabularies/lda#> .
 
 # Prefix for example-local entities.
-@prefix spec:				<http://localhost:8082/> . #elda/vocabulary/>.
+@prefix spec:				<http://localhost:8080/> . #elda/vocabulary/>.
 
 @prefix hig:				<http://www.hans-im-glueck.de/> .
 
