@@ -150,6 +150,8 @@ install_elda() {
       cp /vagrant/config-files/elda-scoreboard.ttl webapps/elda/specs/scoreboard.ttl
       cp /vagrant/config-files/elda-web.xml webapps/elda/WEB-INF/web.xml
       cp /vagrant/config-files/elda-index.html webapps/elda/WEB-INF/index.html
+      cp /vagrant/config-files/elda-E1.2.21-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.21-index.html
+      cp /vagrant/config-files/elda-E1.2.19-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.19-index.html
     popd
 }
 
