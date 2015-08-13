@@ -70,14 +70,12 @@ install_scoreboard() {
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
     echo "Update http/service config files for scoreboard"
     cp /vagrant/config-files/scoreboard-init /etc/init.d/scoreboard
+    cp /vagrant/config-files/ssl.conf /etc/httpd/conf.d/ssl.conf
     cp /vagrant/config-files/scoreboard.conf /etc/httpd/conf.d/ssl-scoreboard.conf
     cp /vagrant/config-files/httpd.conf /etc/httpd/conf/httpd.conf
-    cp /vagrant/config-files/ssl.conf /etc/httpd/conf.d/ssl.conf
     rm -rf /var/local/scoreboard /var/local/scoreboardtest /var/www/html/scoreboard /var/www/html/scoreboardtest
     ln -s /var/local/plone-scoreboard/scoreboard.buildout /var/www/html/scoreboard
-    ln -s /var/local/scoreboardtest /var/www/html/scoreboardtest
-    mkdir -p /var/local/scoreboard
-    mkdir -p /var/local/scoreboardtest
+    ln -s /var/local/plone-scoreboard/scorecoard.buildout.test /var/www/html/scoreboardtest
     chown scoreboard:scoreboard /var/local/scoreboard -R
 
 }
