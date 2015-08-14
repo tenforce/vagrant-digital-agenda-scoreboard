@@ -5,8 +5,12 @@ This Vagrant description is for a virtualbox running Centos 6.5,
 which has as development environment view of the digital agenda
 scoreboard production environment.
 
-It is being put together in the context of the Open Data Support
-project as a demonstration.
+This work is done in the context of the Open Data Support
+project (https://joinup.ec.europa.eu/community/ods/description).
+It will create a locally deployable instance of the Digital Agenda Software stack. 
+With this instance new statistical data can be published as Linked Data.
+
+Open Data Support is funded  under SMART 2012/0107 ‘Lot 2: Provision of services for the Publication, Access and Reuse of Open Public Data across the European Union, through existing open data portals’(Contract No. 30-CE-0530965/00-17).
 
 * Deployment steps
 On the host machine:
