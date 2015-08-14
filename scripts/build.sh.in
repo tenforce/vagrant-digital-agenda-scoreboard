@@ -145,8 +145,7 @@ install_cr() {
     # push /var/local/cr/apphome/staging
     #   wget -r http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing
     # popd
-
-}
+} 
 
 ###########################################################################
 # ELDA
