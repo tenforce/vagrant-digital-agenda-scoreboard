@@ -108,14 +108,22 @@ install_cr() {
     export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
     mkdir -p /var/local/cr/build
     mkdir -p /var/local/crtest/build
+    mkdir -p /var/local/cr/apphome/staging
+    mkdir -p /var/local/cr/apphome/download
+    mkdir -p /var/local/cr/apphome/filestore
+    # Change the permissions on these directories
+    chmod 777 /var/local/cr/apphome/staging /var/local/cr/apphome/download
+    # Rebuild the system if needed
     pushd /var/local/cr/build/
      if [ ! -d "eionet.contreg" ] 
      then
 	git clone --branch=digital-agenda-scoreboard https://github.com/eea/eionet.contreg.git
      fi
     popd
+    # copy across a few config files (before building the war)
+    cp /vagrant/config-files/eionet.contreg-local.properties /var/local/cr/build/eionet.contreg/local.properties
+    cp /vagrant/config-files/cr.groups.xml /var/local/cr/build/eionet.contreg/acl
     pushd /var/local/cr/build/eionet.contreg
-     cp /vagrant/config-files/eionet.contreg-local.properties local.properties
      mvn -Dmaven.test.skip=true clean install
      # Copy the files to the tomcat webapps directory
      cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/
@@ -130,9 +138,14 @@ install_cr() {
       /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 3_create_schema.sql
       /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 4_enforce_inferene_rules.sql
       /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 5_initial_data.sql
+      # This seemed to fix a problem - not sure why
       cp /var/local/cr/build/eionet.contreg/lib/virtuoso/virtjdbc/3.0/virtjdbc-3.0.jar /usr/share/tomcat6/lib
      popd
     popd
+    # push /var/local/cr/apphome/staging
+    #   wget -r http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing
+    # popd
+
 }
 
 ###########################################################################

@@ -42,7 +42,7 @@ install_twisted() {
     wget https://pypi.python.org/packages/source/T/Twisted/Twisted-15.3.0.tar.bz2
     tar jxvf Twisted-15.3.0.tar.bz2
     pushd Twisted-15.3.0
-    python2.7 setup.py install
+     pip2.7 install --upgrade 'Twisted==15.3.0'
     popd
 }
 
