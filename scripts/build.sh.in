@@ -50,14 +50,10 @@ install_scoreboard() {
     cd ..
 
     # cd var/filestorage/ 
-    # Not accessible on the server.
-    # wget http://scoreboardtest.edw.ro/download/Data.fs.gz
-    # wget http://scoreboardtest.edw.ro/download/filestorage.tar.gz
-    # wget http://scoreboardtest.edw.ro/download/blobstorage.tar.gz
-
-    # gunzip Data.fs.gz
-    # tar xf filestorage.tar.gz
-    # tar xf blobstorage.tar.gz
+    cd var
+    wget http://digital-agenda-data.eu/download/plone-storage.tar.gz
+    gunzip plone-storage.tar.gz
+    tar -xf plone-storage.tar
 
     # Now build the test setup (using test.cfg)
     cd scoreboard.buildout.test
