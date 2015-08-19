@@ -89,7 +89,7 @@ elda_production() {
     echo $PATH 
     echo $JAVA_HOME
     java -version
-    ( cd /var/local/elda ; java -jar start.jar )
+    ( cd /var/local/elda ; java -jar start.jar& )
     sleep 10
 }
 
