@@ -38,25 +38,29 @@ install_scoreboard() {
     cp /vagrant/scripts/plone-scoreboard-base.cfg scoreboard.buildout/base.cfg
     cp /vagrant/scripts/plone-versions-4.3.cfg scoreboard.buildout/plone-versions-4.3.cfg
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
-    chown scoreboard:scoreboard /var/local/scoreboard -R
+    # chown scoreboard:scoreboard /var/local/scoreboard -R
 
     # Now build the production (using production.cfg)
     echo "***** build scoreboard (production)"
-    cd scoreboard.buildout
+    cd /var/local/plone-scoreboard/scoreboard.buildout
     su -c "/usr/local/bin/virtualenv . ;\
            source bin/activate ; \
            bin/python2.7 bootstrap.py -c production.cfg ; \
            bin/buildout -c production.cfg" scoreboard
-    cd ..
 
     # Recover and setup the datafiles needed.
+    mkdir -p var
     cd var
-    wget http://digital-agenda-data.eu/download/plone-storage.tar.gz
-    gunzip plone-storage.tar.gz
-    tar -xf plone-storage.tar
+    if ! grep -q www.digital-agenda-data.eu /etc/hosts; then
+	wget http://digital-agenda-data.eu/download/plone-storage.tar.gz
+	gunzip plone-storage.tar.gz
+	tar -xf plone-storage.tar
+    else
+	echo "**** WARNING Could not update datafiles - hosts already redirected"
+    fi
 
     # Now build the test setup (using test.cfg)
-    cd scoreboard.buildout.test
+    cd /var/local/plone-scoreboard/scoreboard.buildout.test
     su -c "/usr/local/bin/virtualenv . ;\
            source bin/activate ; \
            bin/python2.7 bootstrap.py -c test.cfg ; \
@@ -65,6 +69,17 @@ install_scoreboard() {
     # Testable by accessing -  http://localhost:8440/Plone
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
     echo "Update http/service config files for scoreboard"
+    
+    mkdir -p /usr/local/apache/conf/ssl.crt/
+    mkdir -p /usr/local/apache/conf/ssl.key/
+    cp /vagrant/server.crt /usr/local/apache/conf/ssl.crt/
+    cp /vagrant/server.key /usr/local/apache/conf/ssl.key/
+    if [ ! -f  "/usr/local/apache/conf/ssl.crt/server.crt" ]
+    then
+	echo "ERROR: server certificates not available or need to be created"
+	echo "see http://www.akadia.com/services/ssh_test_certificate.html"
+	exit -1
+    fi
     cp /vagrant/config-files/scoreboard-init /etc/init.d/scoreboard
     cp /vagrant/config-files/ssl.conf /etc/httpd/conf.d/ssl.conf
     cp /vagrant/config-files/scoreboard.conf /etc/httpd/conf.d/ssl-scoreboard.conf
@@ -73,7 +88,6 @@ install_scoreboard() {
     ln -s /var/local/plone-scoreboard/scoreboard.buildout /var/www/html/scoreboard
     ln -s /var/local/plone-scoreboard/scorecoard.buildout.test /var/www/html/scoreboardtest
     chown scoreboard:scoreboard /var/local/scoreboard -R
-
 }
 
 ###########################################################################

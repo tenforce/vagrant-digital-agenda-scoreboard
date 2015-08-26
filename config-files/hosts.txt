@@ -6,3 +6,5 @@
 127.0.0.1	test.digital-agenda-data.eu # Visualisation website
 127.0.0.1	test-cr.digital-agenda-data.eu # Content Registry
 127.0.0.1	test-virtuoso.digital-agenda-data.eu # OpenLink Virtuoso
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6

@@ -63,33 +63,25 @@ virtuoso_test() {
 content_registry_production() {
     echo "Stat content repository - production"
     service tomcat6 restart
-    # java -Djava.util.logging.config.file=/var/local/cr/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx2048m -Djava.endorsed.dirs=/var/local/cr/apache-tomcat-6.0.36/endorsed -classpath /var/local/cr/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/cr/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/cr/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/cr/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
 }
 
 # Content Registry (test)
 content_registry_test() {
     echo "Stat content repository - test"
     # service tomcat6 restart
-    # java -Djava.util.logging.config.file=/var/local/crtest/apache-tomcat-6.0.36/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xmx1024m -Djava.endorsed.dirs=/var/local/crtest/apache-tomcat-6.0.36/endorsed -classpath /var/local/crtest/apache-tomcat-6.0.36/bin/bootstrap.jar -Dcatalina.base=/var/local/crtest/apache-tomcat-6.0.36 -Dcatalina.home=/var/local/crtest/apache-tomcat-6.0.36 -Djava.io.tmpdir=/var/local/crtest/apache-tomcat-6.0.36/temp org.apache.catalina.startup.Bootstrap start &
 }
 
 # Elda Standalone Package
 
 elda_test() {
     echo "Start EDLA - testing"
-    ( cd /var/local/elda ; java -jar start.jar )
+    ( cd /var/local/elda ; java -jar start.jar & )
     sleep 10
 }
 
 elda_production() {
     echo "Start EDLA - production /var/local/elda ${ELDAVERSION}"
-    # export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
-    # export LD_LIBRARY_PATH="/usr/lib:LD_LIBRARY_PATH"
-    # export PATH="$JAVA_HOME/bin:/usr/local/bin:$PATH"
-    echo $PATH 
-    echo $JAVA_HOME
-    java -version
-    ( cd /var/local/elda ; java -jar start.jar )
+    ( cd /var/local/elda ; java -jar start.jar & )
     sleep 10
 }
 
