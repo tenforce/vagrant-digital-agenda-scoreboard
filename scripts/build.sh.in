@@ -52,7 +52,7 @@ install_scoreboard() {
     mkdir -p var
     cd var
     if ! grep -q www.digital-agenda-data.eu /etc/hosts; then
-	wget http://digital-agenda-data.eu/download/plone-storage.tar.gz
+	wget_N http://digital-agenda-data.eu/download/plone-storage.tar.gz
 	gunzip plone-storage.tar.gz
 	tar -xf plone-storage.tar
     else
@@ -108,6 +108,11 @@ install_virtuoso() {
      cp /vagrant/config-files/virtuoso-test-init /etc/init.d/virtuosotest
      cp /vagrant/config-files/virtuoso.ini /var/local/virtuoso/var/lib/virtuoso/ontowiki
      cp /vagrant/config-files/virtuosotest.ini /var/local/virtuoso/var/lib/virtuoso/test
+     pushd /var/local/virtuoso/var/lib/virtuoso/db/
+       wget_N http://test.digital-agenda-data.eu/download/virtuoso_copy.db.gz
+       cp virtuoso_copy.db.gz virtuoso.db.gz
+       gzip -df virtuoso.db.gz
+     popd
     popd
 }
 
@@ -140,17 +145,20 @@ install_cr() {
      # Make sure tomcat permissions allow inspection
      cp /vagrant/config-files/tomcat-users.xml /etc/tomcat6
      cp /vagrant/config-files/tomcat-server.xml /etc/tomcat6
-     # Create the database connection ....
-     pushd sql/virtuoso/install
-      # Assuming virtuoso has been place where needed (and started)
-      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 1_create_users.sql
-      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 2_setup_full_text_indexing.sql
-      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 3_create_schema.sql
-      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 4_enforce_inferene_rules.sql
-      /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 5_initial_data.sql
+     # Create the database connection if needed
+     if [ ! -f /var/local/virtuoso/var/lib/virtuoso/db/virtuoso_copy.db.gz ]
+     then
+	 pushd sql/virtuoso/install
+	   # Assuming virtuoso has been place where needed (and started)
+	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 1_create_users.sql
+    	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 2_setup_full_text_indexing.sql
+	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 3_create_schema.sql
+           /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 4_enforce_inferene_rules.sql
+   	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 5_initial_data.sql
+	 popd
+      fi
       # This seemed to fix a problem - not sure why
       cp /var/local/cr/build/eionet.contreg/lib/virtuoso/virtjdbc/3.0/virtjdbc-3.0.jar /usr/share/tomcat6/lib
-     popd
     popd
     # push /var/local/cr/apphome/staging
     #   wget -r http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing
@@ -163,7 +171,7 @@ install_elda() {
     mkdir -p /var/local/elda
     pushd /var/local/elda
       # Install and update the elda software
-      wget https://elda.googlecode.com/files/elda-standalone-1.2.21.jar
+      wget_N https://elda.googlecode.com/files/elda-standalone-1.2.21.jar
       jar xf elda-standalone-1.2.21.jar
       chmod 777 logs
       # Update the configuration files
@@ -176,6 +184,14 @@ install_elda() {
       cp /vagrant/config-files/elda-E1.2.21-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.21-index.html
       cp /vagrant/config-files/elda-E1.2.19-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.19-index.html
     popd
+}
+
+###########################################################################
+# -N option should mean timestamps are checked so download only occurs
+# when file is out-of-date (in this case only once)
+#
+wget_N() { # url
+    wget -N $1
 }
 
 ###########################################################################

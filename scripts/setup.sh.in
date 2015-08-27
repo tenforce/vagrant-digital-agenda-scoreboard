@@ -20,7 +20,7 @@ done
 if [ $STARTSERVICESONLY == FALSE ] 
 then
   #########################################################################
-  if [ $DOINSTALL == TRUE]
+  if [ $DOINSTALL == TRUE ]
   then
     echo "**** INSTALL the basic software needed"
     das-install.sh
