@@ -13,14 +13,15 @@ yum -y install dkms
 # epel
 
 yum -y install libtool gperf openssl-devel readline-devel
-
 yum -y install supervisor memcached zope plone postfix \
        libffi-devel libxslt-devel pound zeo
 
 # Specifics
 yum -y install libffi-devel libxslt-devel mod_ssl
 
+#########################################################################
 # Install maven
+
 install_maven2() {
     wget -N http://archive.apache.org/dist/maven/binaries/apache-maven-2.0.10-bin.tar.gz
     tar xvf apache-maven-2.0.10-bin.tar.gz
@@ -28,7 +29,9 @@ install_maven2() {
     export PATH=/opt/apache-maven-2.0.10/bin:$PATH
 }
 
+#########################################################################
 # Update libevent
+
 install_libevent() {
     wget -N http://downloads.sourceforge.net/levent/libevent-2.0.21-stable.tar.gz
     tar xvf libevent-2.0.21-stable.tar.gz
@@ -37,7 +40,9 @@ install_libevent() {
     popd
 }
 
+#########################################################################
 # Update the Twisted 
+
 install_twisted() {
     wget -N https://pypi.python.org/packages/source/T/Twisted/Twisted-15.3.0.tar.bz2
     tar jxvf Twisted-15.3.0.tar.bz2
@@ -46,18 +51,17 @@ install_twisted() {
     popd
 }
 
-# Python Tools
-install_base_python_tools() {
-    yum -y install python python-devel python-setuptools
-    yum -y install python-virtualenv
-}
+#########################################################################
+# Install Java/Tomcat
 
-# Install Java/Tomcat 
 install_java_tomcat() {
     yum -y install yum-priorities
     yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
     yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
 }
+
+#########################################################################
+# Install python2.7
 
 install_python_2_7() {
     echo "Installing Python 2.7"
@@ -91,11 +95,12 @@ install_python_2_7() {
     echo "done installing python 2.7"
 }
 
+#########################################################################
+#########################################################################
 echo "python2.7 install"
 install_java_tomcat
 install_maven2
 install_libevent
-# install_base_python_tools
 if ! hash python2.7 2>/dev/null; then
     install_python_2_7
 else

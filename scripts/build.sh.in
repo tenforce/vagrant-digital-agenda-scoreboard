@@ -108,9 +108,11 @@ install_virtuoso() {
      cp /vagrant/config-files/virtuoso-test-init /etc/init.d/virtuosotest
      cp /vagrant/config-files/virtuoso.ini /var/local/virtuoso/var/lib/virtuoso/ontowiki
      cp /vagrant/config-files/virtuosotest.ini /var/local/virtuoso/var/lib/virtuoso/test
-     pushd /var/local/virtuoso/var/lib/virtuoso/db/
+     pushd /vagrant
        wget_N http://test.digital-agenda-data.eu/download/virtuoso_copy.db.gz
-       cp virtuoso_copy.db.gz virtuoso.db.gz
+     popd
+     pushd /var/local/virtuoso/var/lib/virtuoso/db/
+       cp /vagrant/virtuoso_copy.db.gz virtuoso.db.gz
        gzip -df virtuoso.db.gz
      popd
     popd
@@ -141,15 +143,16 @@ install_cr() {
     pushd /var/local/cr/build/eionet.contreg
      mvn -Dmaven.test.skip=true clean install
      # Copy the files to the tomcat webapps directory
-     cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/
+     cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/data.war
      # Make sure tomcat permissions allow inspection
      cp /vagrant/config-files/tomcat-users.xml /etc/tomcat6
      cp /vagrant/config-files/tomcat-server.xml /etc/tomcat6
      # Create the database connection if needed
      if [ ! -f /var/local/virtuoso/var/lib/virtuoso/db/virtuoso_copy.db.gz ]
      then
+	 echo "**** WARNING: Rebuilding DB from scratch"
 	 pushd sql/virtuoso/install
-	   # Assuming virtuoso has been place where needed (and started)
+	   # Assuming virtuoso has been place where needed (and has been started)
 	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 1_create_users.sql
     	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 2_setup_full_text_indexing.sql
 	   /var/local/virtuoso/bin/isql localhost:1111 -U dba -P dba < 3_create_schema.sql
@@ -158,7 +161,7 @@ install_cr() {
 	 popd
       fi
       # This seemed to fix a problem - not sure why
-      cp /var/local/cr/build/eionet.contreg/lib/virtuoso/virtjdbc/3.0/virtjdbc-3.0.jar /usr/share/tomcat6/lib
+      # cp /var/local/cr/build/eionet.contreg/lib/virtuoso/virtjdbc/3.0/virtjdbc-3.0.jar /usr/share/tomcat6/lib
     popd
     # push /var/local/cr/apphome/staging
     #   wget -r http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing
