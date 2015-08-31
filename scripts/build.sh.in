@@ -141,6 +141,7 @@ install_cr() {
     cp /vagrant/config-files/eionet.contreg-local.properties /var/local/cr/build/eionet.contreg/local.properties
     cp /vagrant/config-files/cr.groups.xml /var/local/cr/build/eionet.contreg/acl
     pushd /var/local/cr/build/eionet.contreg
+     cp /vagrant/config-files/cr.pom.xml pom.xml
      mvn -Dmaven.test.skip=true clean install
      # Copy the files to the tomcat webapps directory
      cp /var/local/cr/build/eionet.contreg/target/cr-das.war /var/lib/tomcat6/webapps/data.war
@@ -148,7 +149,7 @@ install_cr() {
      cp /vagrant/config-files/tomcat-users.xml /etc/tomcat6
      cp /vagrant/config-files/tomcat-server.xml /etc/tomcat6
      # Create the database connection if needed
-     if [ ! -f /var/local/virtuoso/var/lib/virtuoso/db/virtuoso_copy.db.gz ]
+     if [ ! -f /vagrant/virtuoso_copy.db.gz ]
      then
 	 echo "**** WARNING: Rebuilding DB from scratch"
 	 pushd sql/virtuoso/install
@@ -181,11 +182,12 @@ install_elda() {
       cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
       # git clone https://github.com/eaudeweb/scoreboard.elda.git
       # cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
-      cp /vagrant/config-files/elda-scoreboard.ttl webapps/elda/specs/scoreboard.ttl
+      cp /vagrant/config-files/elda-scoreboard.ttl webapps/root/specs/scoreboard.ttl
       cp /vagrant/config-files/elda-web.xml webapps/elda/WEB-INF/web.xml
       cp /vagrant/config-files/elda-index.html webapps/elda/WEB-INF/index.html
       cp /vagrant/config-files/elda-E1.2.21-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.21-index.html
       cp /vagrant/config-files/elda-E1.2.19-index.html /var/local/elda/webapps/elda/lda-assets/docs/E1.2.19-index.html
+      cp webapps/elda/* webapps/root
     popd
 }
 
