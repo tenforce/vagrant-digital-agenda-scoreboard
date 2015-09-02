@@ -409,7 +409,7 @@ spec:scoreboard-api a api:API
     , spec:timePeriod
 	.
 
-<http://digital-agenda-data.eu/data/sparql> elda:supportsNestedSelect true.
+<http://digital-agenda-data.eu/sparql> elda:supportsNestedSelect true.
 #Endpoint definition
 #List all datasets
 

@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 #################################################################
 # Digital Agenda Score Board (build system requirements)
@@ -5,14 +6,12 @@
 #################################################################
 # Sort out basic + docker installation for centos 7
 # yum -y install epel-release-7
-yum -y update
-
 yum -y groupinstall "Desktop" "Desktop Platform" "X Window System" "Fonts"
 yum -y groupinstall "Graphical Administration Tools"
 yum -y groupinstall "Internet Browser"
 yum -y groupinstall "General Purpose Desktop"
 yum -y groupinstall "Office Suite and Productivity"
-yum -y groupinstall "Graphics Creation Tools"
+# yum -y groupinstall "Graphics Creation Tools"
 
 # Check boot init (change to graphical)
 sed -i -e 's/:3:/:5:/g' /etc/inittab
@@ -24,6 +23,8 @@ yum -y install kernel-devel-`uname -r` kernel-headers-`uname -r`
 yum -y install dos2unix firefox emacs
 yum -y install emacs autoconf vim make wget curl gawk bison m4
 yum -y install gcc gmake autoconf automake flex openssl git
+yum -y install ntp ntpdate ntp-doc
+chkconfig ntpd on
 
 #################################################################
 # finishing and cleaning up.

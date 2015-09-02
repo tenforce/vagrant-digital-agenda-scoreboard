@@ -1,12 +1,45 @@
 #!/bin/bash
-
+#########################################################################
+# 
 export WORKDIR=/tmp
 export PATH=".:./scripts:$PATH"
 
-das-install.sh
+#########################################################################
+DOINSTALL=TRUE
+STARTSERVICESONLY=FALSE
+while getopts ":IS" opt; do
+  case $opt in
+    I) DOINSTALL=FALSE ;;
+    S) STARTSERVICESONLY=TRUE ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
 
-export PATH="/usr/local/bin:$PATH"
-export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+if [ $STARTSERVICESONLY == FALSE ] 
+then
+  #########################################################################
+  if [ $DOINSTALL == TRUE ]
+  then
+    echo "**** INSTALL the basic software needed"
+    das-install.sh
+  fi
+  
+  #########################################################################
+  export PATH="/usr/local/bin:$PATH"
+  export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+  echo "**** BUILD the software needed"
+  build.sh
+  if ! grep -q www.digital-agenda-data.eu /etc/hosts; then
+    echo "UPDATING the hosts to point to local installation"
+    cat /vagrant/config-files/hosts.txt >> /etc/hosts
+  fi
+  #########################################################################
+fi
 
-build.sh
+echo "**** STARTUP the software needed"
 processes.sh
+
+#########################################################################
+#########################################################################

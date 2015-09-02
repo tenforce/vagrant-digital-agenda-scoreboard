@@ -59,14 +59,17 @@ vagrant halt
 vagrant up
 #+END_SRC
 * Testing
-- Tomcat
-- Virtuoso Sparql Endpoint
-- Virtuoso Conductor
-- Apache
-- CR
-- Plone
-- Elda
+- Tomcat - http://localhost:8080/
+- Virtuoso Sparql Endpoint 
+- Virtuoso Conductor - http://localhost:8890/
+- Apache - http://localhost/
+- CR 
+- Plone - http://localhost:8440/Plone
+- Elda - http://localhost:8080/cr-das
+
 * Problems
+** Sometimes it takes a start and rerunning of the script to get it installed
+- not tracked don why this occurs.
+** Network redirections not yet working
 ** Plone - not yet working
 ** Elda - not yet working
-  
