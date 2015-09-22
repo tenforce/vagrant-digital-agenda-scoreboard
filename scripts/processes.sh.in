@@ -62,7 +62,7 @@ virtuoso_test() {
 # Content Registry (production)
 content_registry_production() {
     echo "Stat content repository - production"
-    service tomcat6 restart
+    /var/local/cr/apache*/bin/startup.sh
 }
 
 # Content Registry (test)

@@ -23,10 +23,10 @@ yum -y install libffi-devel libxslt-devel mod_ssl
 # Install maven
 
 install_maven2() {
-    wget -N http://archive.apache.org/dist/maven/binaries/apache-maven-2.0.10-bin.tar.gz
-    tar xvf apache-maven-2.0.10-bin.tar.gz
-    cp -r apache-maven-2.0.10 /opt
-    export PATH=/opt/apache-maven-2.0.10/bin:$PATH
+    wget -N http://archive.apache.org/dist/maven/binaries/apache-maven-2.0.11-bin.tar.gz
+    tar xvf apache-maven-2.0.11-bin.tar.gz
+    cp -r apache-maven-2.0.11 /opt
+    export PATH=/opt/apache-maven-2.0.11/bin:$PATH
 }
 
 #########################################################################
@@ -57,7 +57,7 @@ install_twisted() {
 install_java_tomcat() {
     yum -y install yum-priorities
     yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
-    yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
+    # yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
 }
 
 #########################################################################

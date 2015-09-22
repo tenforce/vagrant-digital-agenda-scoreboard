@@ -28,7 +28,7 @@ then
   
   #########################################################################
   export PATH="/usr/local/bin:$PATH"
-  export PATH="/opt/apache-maven-2.0.10/bin:$PATH"
+  export PATH="/opt/apache-maven-2.0.11/bin:$PATH"
   echo "**** BUILD the software needed"
   build.sh
   if ! grep -q www.digital-agenda-data.eu /etc/hosts; then
