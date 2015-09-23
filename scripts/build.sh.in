@@ -170,7 +170,7 @@ install_cr() {
      popd
      # copy across a few config files (before building the war)
      cp /vagrant/config-files/eionet.contreg-local.properties /var/local/cr/build/eionet.contreg/local.properties
-     cp /vagrant/config-files/cr.groups.xml /var/local/cr/build/eionet.contreg/acl
+     cp /vagrant/config-files/cr.groups.xml /var/local/cr/apphome/acl
      pushd /var/local/cr/build/eionet.contreg
       # cp /vagrant/config-files/cr.pom.xml pom.xml
       mvn -Dmaven.test.skip=true clean install
@@ -180,9 +180,10 @@ install_cr() {
       # cp /var/local/cr/build/eionet.contreg/target/cr.war /var/lib/tomcat6/webapps/data.war   
       cp /var/local/cr/build/eionet.contreg/target/cr.war /var/local/cr/apache-tomcat-6.0.44/webapps/data.war
       # Make sure tomcat config updated and permissions allow inspection
-      cp /vagrant/config-files/tomcat6.conf /etc/tomcat6
-      cp /vagrant/config-files/tomcat-users.xml /var/local/cr/apache-tomcat-6.0.44/conf/tomcat6
-      cp /vagrant/config-files/tomcat-server.xml /var/local/cr/apache-tomcat-6.0.44/tomcat6/server.xml
+      # cp /vagrant/config-files/tomcat6.conf /etc/tomcat6
+      cp /vagrant/config-files/tomcat-users.xml /var/local/cr/apache-tomcat-6.0.44/conf
+      cp /vagrant/config-files/tomcat-server.xml /var/local/cr/apache-tomcat-6.0.44/conf/server.xml
+                                                 
       # cp /vagrant/config-files/tomcat-init.sh /etc/init.d/tomcat6
       # Create the database connection if needed
       if [ ! -f /vagrant/virtuoso_copy.db.gz ]
