@@ -164,8 +164,7 @@ install_cr() {
      pushd /var/local/cr/build/
       if [ ! -d "eionet.contreg" ] 
       then
-	 #  git clone --branch=digital-agenda-scoreboard https://github.com/eea/eionet.contreg.git
-	 git clone https://github.com/eea/eionet.contreg.git
+	 git clone https://github.com/tripledev/scoreboard.contreg
       fi
      popd
      # copy across a few config files (before building the war)
