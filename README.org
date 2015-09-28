@@ -17,7 +17,7 @@ services for the Publication, Access and Reuse of Open Public Data
 across the European Union, through existing open data
 portals’(Contract No. 30-CE-0530965/00-17).
 
-*WARNING* Vagrant machines are not secure and are for
+*WARNING:* Vagrant machines are not secure and are for
  testing/development purposes only. User accounts and passwords will
  need to be updated for any production usage.
 
@@ -29,10 +29,9 @@ On the host machine:
 On the vagrant machine
   - login to the system
 
-       user account: /vagrant/
-       user password: /vagrant/
-
-       note credentials Virtuoso are dba/dba
+    user account: /vagrant/, password: /vagrant/
+    
+    *note:* credentials for virtuoso are dba (to be provided)
 
   - cd /vagrant
   - Generate the SSL certificate to be used.
@@ -40,7 +39,8 @@ On the vagrant machine
       http://www.akadia.com/services/ssh_test_certificate.html
   - Regenerate the configuration files, etc. using the command:
     - ( autoconf ; ./configure )
-  - Inatll extra software, build the components and start the various
+
+  - Install the extra software, build the components and start the various
     services, using the command:
 
     - sudo scripts/setup.sh
@@ -52,8 +52,13 @@ On the vagrant machine
 
 ** Installation Setup
 The two main components to install are:
+
 - install VirtualBox - 5.0.0 (https://www.virtualbox.org)
+
 - install Vagrant - 1.7.4 (https://www.vagrantup.com/)
+
+Prior versions will not be checked against (sorry).
+
 ** Starting up Vagrant
 #+BEGIN_SRC bash
 vagrant plugin install vagrant-vbguest
