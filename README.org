@@ -1,16 +1,25 @@
 #+TITLE: Vagrant-Digital-Agenda-Scoreboard
 
 * Introduction 
+
 This Vagrant description is for a virtualbox running Centos 6.5,
 which has as development environment view of the digital agenda
 scoreboard production environment.
 
-This work is done in the context of the Open Data Support
-project (https://joinup.ec.europa.eu/community/ods/description).
-It will create a locally deployable instance of the Digital Agenda Software stack. 
-With this instance new statistical data can be published as Linked Data.
+This work is done in the context of the Open Data Support project
+(https://joinup.ec.europa.eu/community/ods/description).  It will
+create a locally deployable instance of the Digital Agenda Software
+stack.  With this instance new statistical data can be published as
+Linked Data.
 
-Open Data Support is funded  under SMART 2012/0107 ‘Lot 2: Provision of services for the Publication, Access and Reuse of Open Public Data across the European Union, through existing open data portals’(Contract No. 30-CE-0530965/00-17).
+Open Data Support is funded under SMART 2012/0107 ‘Lot 2: Provision of
+services for the Publication, Access and Reuse of Open Public Data
+across the European Union, through existing open data
+portals’(Contract No. 30-CE-0530965/00-17).
+
+*WARNING* Vagrant machines are not secure and are for
+ testing/development purposes only. User accounts and passwords will
+ need to be updated for any production usage.
 
 * Deployment steps
 On the host machine:
@@ -19,8 +28,12 @@ On the host machine:
   - vagrant up (See starting up vagrant below)
 On the vagrant machine
   - login to the system
-       user:vagrant/vagrant
+
+       user account: /vagrant/
+       user password: /vagrant/
+
        note credentials Virtuoso are dba/dba
+
   - cd /vagrant
   - Generate the SSL certificate to be used.
     - A good description on how to to this can be found here:
@@ -29,8 +42,14 @@ On the vagrant machine
     - ( autoconf ; ./configure )
   - Inatll extra software, build the components and start the various
     services, using the command:
-     - sudo WORKDIR=/tmp scripts/setup.sh
-    
+
+    - sudo scripts/setup.sh
+
+    Once installed there is not requirement to rebuild the 
+    system each time and the only the services need to be restarted, using
+
+    - sudo scripts/setup.sh -S
+
 ** Installation Setup
 The two main components to install are:
 - install VirtualBox - 5.0.0 (https://www.virtualbox.org)
@@ -62,8 +81,7 @@ vagrant up
 - Elda   - http://localhost:8080/cr-das
 
 * Problems
-** Sometimes it takes a start and rerunning of the script to get it installed
-- not tracked don why this occurs.
-** Network redirections not yet working
-** Plone - not yet working
-** Elda - not yet working
+- Virtuoso database permissions for CR3USER and CR3ROUSER need to be
+  updated via the conductor (giving them administration rights).
+- cr-das.war is renamed as data.war so it matches the tomcat path
+  required.

@@ -1,9 +1,10 @@
 #!/bin/bash
-#######################################################################
+#########################################################################
 # Intention is to install all DAS components as described in the
 # deployment guide.
 
-# rpmforge (gperf)
+#########################################################################
+# Basics which are required.
 
 wget -N http://dag.wieers.com/rpm/packages/RPM-GPG-KEY.dag.txt
 rpm --import RPM-GPG-KEY.dag.txt
@@ -16,11 +17,11 @@ yum -y install libtool gperf openssl-devel readline-devel
 yum -y install supervisor memcached zope plone postfix \
        libffi-devel libxslt-devel pound zeo
 
-# Specifics
+# Some Specifics
 yum -y install libffi-devel libxslt-devel mod_ssl
 
 #########################################################################
-# Install maven
+# Install maven (2.0.11 version of maven is used).
 
 install_maven2() {
     wget -N http://archive.apache.org/dist/maven/binaries/apache-maven-2.0.11-bin.tar.gz
@@ -30,7 +31,7 @@ install_maven2() {
 }
 
 #########################################################################
-# Update libevent
+# Update libevent (2.0.21 version)
 
 install_libevent() {
     wget -N http://downloads.sourceforge.net/levent/libevent-2.0.21-stable.tar.gz
@@ -41,27 +42,15 @@ install_libevent() {
 }
 
 #########################################################################
-# Update the Twisted 
+# Install Java (1.6 version of Java)
 
-install_twisted() {
-    wget -N https://pypi.python.org/packages/source/T/Twisted/Twisted-15.3.0.tar.bz2
-    tar jxvf Twisted-15.3.0.tar.bz2
-    pushd Twisted-15.3.0
-     pip2.7 install --upgrade 'Twisted==15.3.0'
-    popd
-}
-
-#########################################################################
-# Install Java/Tomcat
-
-install_java_tomcat() {
+install_java() {
     yum -y install yum-priorities
     yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
-    # yum -y install tomcat6 tomcat6-webapps tomcat6-admin-webapps
 }
 
 #########################################################################
-# Install python2.7
+# Install python2.7 (2.7.8 version installed, with setuptools, etc.)
 
 install_python_2_7() {
     echo "Installing Python 2.7"
@@ -96,12 +85,24 @@ install_python_2_7() {
 }
 
 #########################################################################
+# Update the Twisted (15.3.0 version for python 2.7)
+
+install_twisted() {
+    wget -N https://pypi.python.org/packages/source/T/Twisted/Twisted-15.3.0.tar.bz2
+    tar jxvf Twisted-15.3.0.tar.bz2
+    pushd Twisted-15.3.0
+     pip2.7 install --upgrade 'Twisted==15.3.0'
+    popd
+}
+
+#########################################################################
 #########################################################################
 echo "python2.7 install"
-install_java_tomcat
+install_java
 install_maven2
 install_libevent
 if ! hash python2.7 2>/dev/null; then
+    # will install the python 2.7.8 version of all tools required.
     install_python_2_7
 else
     echo "Python2.7 already installed"
