@@ -31,7 +31,7 @@ On the vagrant machine
 
     user account: /vagrant/, password: /vagrant/
     
-    *note:* credentials for virtuoso are dba (to be provided)
+    *note:* credentials for virtuoso are dba (password to be provided)
 
   - cd /vagrant
   - Generate the SSL certificate to be used.
@@ -76,17 +76,25 @@ vagrant up
 vagrant halt
 vagrant up
 #+END_SRC
-* Testing
+* Testing Links:
+
 - Tomcat - http://localhost:8080/
-- Virtuoso Sparql Endpoint 
+- Virtuoso Sparql Endpoint - http://localhost:1111/sparql
 - Virtuoso Conductor - http://localhost:8890/
 - Apache - http://localhost/
 - CR     - http://localhost:8082/data
 - Plone  - http://localhost:8440/Plone
-- Elda   - http://localhost:8080/cr-das
+- Elda   - http://localhost:8080/scoreboard
+
+All these should also be accessible viaL
+
+- http://www.digital-agenda-data.eu 
+
+which will link to the local machine.
 
 * Problems
 - Virtuoso database permissions for CR3USER and CR3ROUSER need to be
   updated via the conductor (giving them administration rights).
 - cr-das.war is renamed as data.war so it matches the tomcat path
   required.
+- Test description not available.
