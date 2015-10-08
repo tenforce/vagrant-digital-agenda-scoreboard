@@ -16,6 +16,18 @@ export JAVA_HOME=/vagrant/jdk1.6.0_43
 export PATH="$JAVA_HOME/bin:$PATH"
 
 ###########################################################################
+# Check for some options
+RESETVIRTUOSO=FALSE
+while getopts ":R" opt; do
+  case $opt in
+    R) RESETVIRTUOSO=TRUE ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
+
+###########################################################################
 # First Check a bunch of installs are correct for this script (force abort)
 
 hash java 2>/dev/null || { echo >&2 "java is required.  Aborting."; exit 1; }
@@ -129,12 +141,25 @@ install_virtuoso() {
      pushd /vagrant
        wget_N http://test.digital-agenda-data.eu/download/virtuoso_copy.db.gz
      popd
-     pushd /var/local/virtuoso/var/lib/virtuoso/db/
+     copy_virtuoso_db
+    popd
+}
+
+copy_virtuoso_db() {
+    pushd /var/local/virtuoso/var/lib/virtuoso/db/
        # Replace the empty/not yet created db with the copy of the actual database,
        cp /vagrant/virtuoso_copy.db.gz virtuoso.db.gz
        gzip -df virtuoso.db.gz
-     popd
     popd
+}
+
+# REINSTALL the Virtuoso db
+
+reinstall_virtuoso() {
+    echo "reinstall the virtuoso database"
+    service virtuoso stop ;
+    copy_virtuoso_db ;
+    service virtuoso start
 }
 
 ###########################################################################
@@ -222,14 +247,19 @@ install_elda() {
 ###########################################################################
 # Install virtuoso first - should be standard enough.
 
-install_virtuoso
-service virtuoso start
-sleep 10;
-set_access_rights
-install_scoreboard;
-install_cr;
-install_elda
+if [ $RESETVIRTUOSO == TRUE ]
+then
+    reinstall_virtuoso;
+else
+    install_virtuoso
+    service virtuoso start
+    sleep 10;
+    set_access_rights
+    install_scoreboard;
+    install_cr;
+    install_elda
+fi
 
-echo "Now login with conductor and update cr3user permissions for role - dba rights"
+echo "Now login with conductor and update cr3user/cr3rouser permissions for role - dba rights"
 ###########################################################################
 ###########################################################################

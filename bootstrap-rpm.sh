@@ -26,7 +26,15 @@ yum -y install ntp ntpdate ntp-doc
 chkconfig ntpd on
 
 #################################################################
+echo "****** Installing DAS software"
+( pushd /vagrant
+   # made sure all files in normal format (not windows)
+   dos2unix scripts/*.in ;
+   dos2unix config-files/* ;
+   autoconf ; ./configure ; scripts/setup.sh
+  popd )
+
+#################################################################
 # finishing and cleaning up.
-dos2unix scripts/*.in
-dos2unix config-files/*
-echo "****** done with bootstrap of Digital Agenda Test machine"
+echo "****** Bootstraping of Digital Agenda machine has been done"
+echo "****** You will still have to update some permissions and start the services"

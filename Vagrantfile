@@ -25,7 +25,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
       vb.name = "VagrantDigitalAgendaScoreboard"
       vb.gui = true
-      vb.customize ["modifyvm", :id, "--memory", 4096]
+      vb.customize ["modifyvm", :id, "--memory", 6000]
       vb.customize ["modifyvm", :id, "--vram", 64]
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]

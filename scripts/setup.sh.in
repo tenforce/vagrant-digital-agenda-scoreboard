@@ -7,17 +7,22 @@ export PATH=".:./scripts:$PATH"
 #########################################################################
 DOINSTALL=TRUE
 STARTSERVICESONLY=FALSE
-while getopts ":IS" opt; do
+RESETVIRTUOSO=FALSE
+while getopts ":ISR" opt; do
   case $opt in
     I) DOINSTALL=FALSE ;;
     S) STARTSERVICESONLY=TRUE ;;
+    R) RESETVIRTUOSO=TRUE ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       ;;
   esac
 done
 
-if [ $STARTSERVICESONLY == FALSE ] 
+if [ $RESETVIRTUOSO == TRUE ]
+then
+    build.sh -R
+elif [ $STARTSERVICESONLY == FALSE ] 
 then
   #########################################################################
   if [ $DOINSTALL == TRUE ]
@@ -36,6 +41,8 @@ then
     cat /vagrant/config-files/hosts.txt >> /etc/hosts
   fi
   #########################################################################
+else
+    echo "nothng to do"
 fi
 
 echo "**** STARTUP the software needed"
