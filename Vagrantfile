@@ -6,14 +6,15 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure(2) do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
-
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://atlas.hashicorp.com/search.
-  # config.vm.box = "http://www.lyricalsoftware.com/downloads/centos65.box"
   config.vm.box = "box-cutter/centos65-desktop"
+
+  # Attempt to cache downloaded files (only if plugin is present).
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+    config.cache.enable :yum
+    config.cache.enable :gem
+  end
+
   config.vm.provision :shell, path: "bootstrap-rpm.sh"
   # config.vm.synced_folder "OpenData", "/vagrant_opendata"
   config.vm.synced_folder ".", "/vagrant"

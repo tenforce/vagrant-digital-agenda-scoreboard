@@ -1,0 +1,86 @@
+#+SETUPFILE: ~/SpiderOak/Org/org-html-themes/setup/theme-readtheorg.setup
+#+TITLE: Digital Agenda Scoreboard - Development Environment
+
+* Introduction
+
+Once installed there is no requirement to rebuild the system each time
+(unless something has been updated) and the only the services need to
+be restarted, using
+
+#+BEGIN_QUOTE
+sudo /vagrant/scripts/setup.sh -S
+#+END_QUOTE
+
+Once the services have been restarted, the following should be
+accessible:
+
+- [[http://www.digital-agenda-data.eu/][Digital Agenda Scoreboard (homepage)]]
+- [[http://www.digital-agenda-data.eu/data][Digital Agenda Scoreboard (data)]]
+- [[http://semantic.digital-agenda-data.eu/dataset/][Digital Agenda Scoreboard (elda)]]
+- [[http://localhost:1111/sparql][Virtuoso Sparql Endpoint]]
+- [[http://localhost:8890/][Virtuoso Conductor]]
+- Supervisor
+- [[http://localhost:8080/][Tomcat]]
+- [[http://localhost/][Apache]]
+- CR     - http://localhost:8082/data
+- Plone  - http://localhost:8440/Plone
+- Elda   - http://localhost:8080/scoreboard
+
+Files in /vagrant are shared with the host system, so backup of
+pipelines, etc. need to be moved there.
+
+/vagrant/virtuoso will contain the database (will be created once).
+
+* Environment Details
+  
+| Component     | Version | Documentation     | Notes  |
+|---------------+---------+-------------------+--------|
+| CentOS        |     6.5 | http://cents.org/ | [fn:2] |
+| Java          |     1.6 |                   |        |
+| Virtuso       |       6 |                   |        |
+| Maven         |  2.0.11 |                   |        |
+| Python        |   2.7.8 |                   |        |
+| Plone         |     4.3 |                   |        |
+| Elda          |  1.2.21 |                   | [fn:3] |
+| Firefox       |         |                   |        |
+| Apache Tomcat |  6.0.44 |                   | [fn:1] |
+| zope          |         |                   |        |
+| supervisor    |         |                   |        |
+| Libevent      |  2.0.21 |                   |        |
+| Twisted       |  15.3.0 |                   | [fn:4] |
+  
+* Development Environment
+
+- services startup
+
+* Account Details
+
+usr/lib64/firefox/browser/defaults/preferences/all-redhat.js
+
+- [[http://www.digital-agenda-data.eu/data][Digital Agenda Scoreboard (data)]] ::
+  - Login : /admin/
+  - Password : /admin/
+
+- [[http://semantic.digital-agenda-data.eu/dataset/][Digital Agenda Scoreboard (elda)]] ::
+
+  XXX
+
+- [[http://localhost:1111/sparql][Virtuoso Sparql Endpoint]] ::
+
+  - Login : /dba/
+  - Login : /dba/
+
+- [[http://localhost:8890/][Virtuoso Conductor]] ::
+
+  - Login : /dba/
+  - Login : /dba/
+
+* Footnotes
+
+[fn:1] End-of-life 2015
+
+[fn:2] Superceded by CentOs 7.0
+
+[fn:3] Taken from [[http://elda.googlecode.com][googlecode]] which will disappear soon.
+
+[fn:4] Later versions caused problems (needs retesting now everything works)
