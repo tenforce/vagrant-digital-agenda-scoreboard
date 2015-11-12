@@ -32,7 +32,14 @@ echo "****** Installing DAS software"
    dos2unix scripts/*.in ;
    dos2unix config-files/* ;
    autoconf ; ./configure ;
-   scripts/setup.sh ;
+   if [ -f "server.crt" ]
+   then
+     scripts/setup.sh
+   else
+     echo "**********************************************************"
+     echo "**** SSL Certificate not found - needs to be generated ***"
+     echo "**********************************************************"     
+   fi
   popd )
 
 #################################################################

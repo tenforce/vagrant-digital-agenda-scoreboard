@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Digital Agenda Scoreboard - Development Environment</title>
-<!-- 2015-11-02 ma 14:22 -->
+<!-- 2015-11-12 do 09:48 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -147,9 +147,12 @@ for the JavaScript code in this tag.
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Introduction</a></li>
-<li><a href="#sec-2">2. Environment Details</a></li>
-<li><a href="#sec-3">3. Development Environment</a></li>
-<li><a href="#sec-4">4. Account Details</a></li>
+<li><a href="#sec-2">2. SSL Certificate Generation</a></li>
+<li><a href="#sec-3">3. Building/Installing the system</a></li>
+<li><a href="#sec-4">4. Starting the Services</a></li>
+<li><a href="#sec-5">5. Environment Details</a></li>
+<li><a href="#sec-6">6. Development Environment</a></li>
+<li><a href="#sec-7">7. Account Details</a></li>
 </ul>
 </div>
 </div>
@@ -159,18 +162,8 @@ for the JavaScript code in this tag.
 <div class="outline-text-2" id="text-1">
 <p>
 Once installed there is no requirement to rebuild the system each time
-(unless something has been updated) and the only the services need to
-be restarted, using
-</p>
-
-<blockquote>
-<p>
-sudo /vagrant/scripts/setup.sh -S
-</p>
-</blockquote>
-
-<p>
-Once the services have been restarted, the following should be
+and only the services need to be restarted (using <b>sudo
+/vagrant/scripts/setup.sh -S</b>). Once restarted, the following should be
 accessible:
 </p>
 
@@ -200,19 +193,65 @@ accessible:
 </ul>
 
 <p>
-Files in /vagrant are shared with the host system, so backup of
-pipelines, etc. need to be moved there.
-</p>
-
-<p>
-/vagrant/virtuoso will contain the database (will be created once).
+Files in /vagrant are shared with the host system, so any files which need
+to be backed up or saved, etc. need to be moved there.
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Environment Details</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> SSL Certificate Generation</h2>
 <div class="outline-text-2" id="text-2">
+<p>
+cd to /vagrant and then follow steps 1 through 4 decribed in:
+  <a href="http://www.akadia.com/services/ssh_test_certificate.html">http://www.akadia.com/services/ssh_test_certificate.html</a>.
+Once the certificates have been generated, the system can be 
+built and installed using the commands below.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Building/Installing the system</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The build the services and install all the required parts in the
+correct place the following can be used.
+</p>
+<blockquote>
+<p>
+cd /vagrant ;
+sudo scripts/setup.sh
+</p>
+</blockquote>
+
+<p>
+The system will then need to be rebooted. This should only be
+necessary once.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Starting the Services</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+This command will be needed each time the system is restarted and it
+will only restart the services (no rebuilding of software packages).
+</p>
+
+<blockquote>
+<p>
+cd /vagrant; 
+sudo scripts/setup.sh -S
+</p>
+</blockquote>
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Environment Details</h2>
+<div class="outline-text-2" id="text-5">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -329,9 +368,9 @@ pipelines, etc. need to be moved there.
 </div>
 </div>
 
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Development Environment</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Development Environment</h2>
+<div class="outline-text-2" id="text-6">
 <ul class="org-ul">
 <li>services startup
 </li>
@@ -339,9 +378,9 @@ pipelines, etc. need to be moved there.
 </div>
 </div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Account Details</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Account Details</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 usr/lib64/firefox/browser/defaults/preferences/all-redhat.js
 </p>
@@ -400,7 +439,7 @@ Later versions caused problems (needs retesting now everything works)
 </div>
 </div></div>
 <div id="postamble" class="status">
-<p class="date">Created: 2015-11-02 ma 14:22</p>
+<p class="date">Created: 2015-11-12 do 09:48</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.7c)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

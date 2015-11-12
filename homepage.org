@@ -4,14 +4,8 @@
 * Introduction
 
 Once installed there is no requirement to rebuild the system each time
-(unless something has been updated) and the only the services need to
-be restarted, using
-
-#+BEGIN_QUOTE
-sudo /vagrant/scripts/setup.sh -S
-#+END_QUOTE
-
-Once the services have been restarted, the following should be
+and only the services need to be restarted (using *sudo
+/vagrant/scripts/setup.sh -S*). Once restarted, the following should be
 accessible:
 
 - [[http://www.digital-agenda-data.eu/][Digital Agenda Scoreboard (homepage)]]
@@ -26,10 +20,34 @@ accessible:
 - Plone  - http://localhost:8440/Plone
 - Elda   - http://localhost:8080/scoreboard
 
-Files in /vagrant are shared with the host system, so backup of
-pipelines, etc. need to be moved there.
+Files in /vagrant are shared with the host system, so any files which need
+to be backed up or saved, etc. need to be moved there.
 
-/vagrant/virtuoso will contain the database (will be created once).
+* SSL Certificate Generation
+cd to /vagrant and then follow steps 1 through 4 decribed in:
+  http://www.akadia.com/services/ssh_test_certificate.html.
+Once the certificates have been generated, the system can be 
+built and installed using the commands below.
+
+* Building/Installing the system
+The build the services and install all the required parts in the
+correct place the following can be used.
+#+BEGIN_QUOTE
+cd /vagrant ;
+sudo scripts/setup.sh
+#+END_QUOTE
+
+The system will then need to be rebooted. This should only be
+necessary once.
+
+* Starting the Services
+This command will be needed each time the system is restarted and it
+will only restart the services (no rebuilding of software packages).
+
+#+BEGIN_QUOTE
+cd /vagrant; 
+sudo scripts/setup.sh -S
+#+END_QUOTE
 
 * Environment Details
   
