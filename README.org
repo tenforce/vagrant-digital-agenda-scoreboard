@@ -71,8 +71,8 @@ run because they are missing).
 
 A good description on how to to this can be found here -
 http://www.akadia.com/services/ssh_test_certificate.html (*only steps
-1-4 need be followed the setup.sh script will install the certificate
-where needed*). 
+1-4 need be followed after which the setup.sh script will install the
+certificate where it is needed*).
 
 A simple appraoch to this is to use vagrant to start the VM, then in a
 terminal run through steps 1 thru 4, then run manually the
@@ -91,7 +91,7 @@ Prior versions will not be checked against (sorry).
 
 The first time the setup.sh script is used, there will be a need to
 update the permissions for two virtuoso user accounts. These are
-the accounts beginning with CR (CRUSER and CR2ROUSER). This can be 
+the accounts beginning with CR (CR3USER and CR3ROUSER). This can be 
 done by going to the virtuoso conductor:
 
 [[localhost:8890/conductor]]
