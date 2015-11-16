@@ -61,11 +61,11 @@ install_scoreboard() {
 
     echo "***** plone config files"
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
-    cp /vagrant/scripts/plone-scoreboard-base.cfg scoreboard.buildout.test/base.cfg
-    cp /vagrant/scripts/plone-versions-4.3.cfg scoreboard.buildout.test/plone-versions-4.3.cfg
+    cp /vagrant/config-files/plone-scoreboard-base.cfg scoreboard.buildout.test/base.cfg
+    cp /vagrant/config-files/plone-versions-4.3.cfg scoreboard.buildout.test/plone-versions-4.3.cfg
 
-    cp /vagrant/scripts/plone-scoreboard-base.cfg scoreboard.buildout/base.cfg
-    cp /vagrant/scripts/plone-versions-4.3.cfg scoreboard.buildout/plone-versions-4.3.cfg
+    cp /vagrant/config-files/plone-scoreboard-base.cfg scoreboard.buildout/base.cfg
+    cp /vagrant/config-files/plone-versions-4.3.cfg scoreboard.buildout/plone-versions-4.3.cfg
     chown scoreboard:scoreboard /var/local/plone-scoreboard -R
     # chown scoreboard:scoreboard /var/local/scoreboard -R
 
@@ -237,7 +237,7 @@ install_elda() {
       jar xf elda-standalone-1.2.21.jar
       chmod 777 logs
       # Update the configuration files
-      cp /vagrant/scripts/elda-jetty.xml etc/jetty.xml
+      cp /vagrant/config-files/elda-jetty.xml etc/jetty.xml
       # git clone https://github.com/eaudeweb/scoreboard.elda.git
       # cp /vagrant/config-files/urlrewritefilter-4.0.3.jar webapps/root/WEB-INF/lib
       cp /vagrant/config-files/elda-scoreboard.ttl webapps/elda/specs/scoreboard.ttl

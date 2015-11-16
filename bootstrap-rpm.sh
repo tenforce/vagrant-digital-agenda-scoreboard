@@ -26,7 +26,9 @@ yum -y install ntp ntpdate ntp-doc
 chkconfig ntpd on
 
 #################################################################
-echo "****** Installing DAS software"
+echo "**************************************"
+echo "****** Installing DAS software *******"
+echo "**************************************"
 ( pushd /vagrant
    # made sure all files in normal format (not windows)
    dos2unix scripts/*.in ;
@@ -35,10 +37,16 @@ echo "****** Installing DAS software"
    if [ -f "server.crt" ]
    then
      scripts/setup.sh
+     echo "**********************************************************************"
+     echo "****** Bootstraping of DAD machine should have been done       *******"
+     echo "****** You will still have to update the virtuoso permissions  *******"
+     echo "****** and start the services                                  *******"
+     echo "**********************************************************************"
    else
-     echo "**********************************************************"
-     echo "**** SSL Certificate not found - needs to be generated ***"
-     echo "**********************************************************"     
+     echo "**********************************************(***********************"
+     echo "****** SSL CERTIFICATE NOT FOUND - they need to be generated   *******"
+     echo "****** and then script/setup run manually (see README)         *******"
+     echo "**********************************************************************"     
    fi
   popd )
 
@@ -48,7 +56,3 @@ echo "****** Setting homepage of firefox"
 echo "user_pref(\"browser.startup.homepage\", \"file:///vagrant/homepage.html\");" >> /usr/lib64/firefox/defaults/syspref.js
 echo "user_pref(\"browser.startup.homepage\", \"file:///vagrant/homepage.html\");" >> /usr/lib64/firefox/defaults/preferences/all-redhat.js
 
-#################################################################
-# finishing and cleaning up.
-echo "****** Bootstraping of Digital Agenda machine has been done"
-echo "****** You will still have to update some permissions and start the services"
