@@ -23,60 +23,123 @@ portals’(Contract No. 30-CE-0530965/00-17).
 
 * Deployment steps
 On the host machine:
-  - install virtualbox and vagrant (See Below)
+
+  - install virtualbox and vagrant (See below)
   - check out this git repository,
+  - create the certificates needed to install the software (See below)
   - vagrant up (See starting up vagrant below)
-On the vagrant machine
+
+On the vagrant machine:
   - login to the system
 
     user account: /vagrant/, password: /vagrant/
     
     *note:* credentials for virtuoso are dba (password to be provided)
 
-  - cd /vagrant
-  - Generate the SSL certificate to be used.
-    - A good description on how to to this can be found here:
-      http://www.akadia.com/services/ssh_test_certificate.html
+  - In a terminal
+
+  #+BEGIN_QUOTE
+  cd /vagrant
+  #+END_QUOTE
+
   - Regenerate the configuration files, etc. using the command:
-    - ( autoconf ; ./configure )
 
-  - Install the extra software, build the components and start the various
-    services, using the command:
+  #+BEGIN_QUOTE    
+  ( autoconf ; ./configure )
+  #+END_QUOTE
 
-    - sudo scripts/setup.sh
+  - Install the extra software, build the components and start the
+    various DAS services, using the command:
 
-    Once installed there is not requirement to rebuild the 
-    system each time and the only the services need to be restarted, using
+  #+BEGIN_QUOTE    
+  sudo scripts/setup.sh
+  #+END_QUOTE
 
-    - sudo scripts/setup.sh -S
+  - First Time Updates required (see below)
+
+  - Once installed there is not requirement to rebuild the system each
+    time and the only the services need to be restarted, using
+
+  #+BEGIN_QUOTE
+  sudo scripts/setup.sh -S
+  #+END_QUOTE
+
+** Create the SSL certificates to be used
+The Digital Agenda Scoreboard requries SSL certificates be present,
+during the installation (message will be issued if setup.sh cannot be
+run because they are missing).
+
+A good description on how to to this can be found here -
+http://www.akadia.com/services/ssh_test_certificate.html (*only steps
+1-4 need be followed the setup.sh script will install the certificate
+where needed*). 
+
+A simple appraoch to this is to use vagrant to start the VM, then in a
+terminal run through steps 1 thru 4, then run manually the
+scripts/setup.sh following this to build and install the software.
 
 ** Installation Setup
 The two main components to install are:
 
-- install VirtualBox - 5.0.0 (https://www.virtualbox.org)
+- install VirtualBox - 5.0.6 (https://www.virtualbox.org)
 
 - install Vagrant - 1.7.4 (https://www.vagrantup.com/)
 
 Prior versions will not be checked against (sorry).
 
-** Starting up Vagrant
+** First Time Updates Required
+
+The first time the setup.sh script is used, there will be a need to
+update the permissions for two virtuoso user accounts. These are
+the accounts beginning with CR (CRUSER and CR2ROUSER). This can be 
+done by going to the virtuoso conductor:
+
+[[localhost:8890/conductor]]
+
+Then in:
+
+#+BEGIN_QUOTE
+System Admin > User Accounts > cr3rouser > Edit
+#+END_QUOTE
+
+Change the *Primary Role* to *dba* and in the account roles (move
+everything except the *nogroup* to the selected list). Then *save* the
+updates. The same should then be done for the *c3ruser* account.
+ 
+Following this it is best to restart the VM (vagrant halt; vagrant up)
+so that the host names, etc. are correctly set.
+
+** Starting with Vagrant
+
+The following are the basic commands (workflow) expected for using the 
+vagrant machine.
+
 #+BEGIN_SRC bash
 vagrant plugin install vagrant-vbguest
     # Which will install the virtualbox guest additions
     # allowing full screen for this virtualbox.
+vagrant plugin install vagrant-cachier
+    # which will cache the packages downloaded
 vagrant up
-    # Which will make sure the interface is accessible
-    # It will download the ISO image, and 
-    # then will download all necessary packages
-    # 
+    # which will start the process of download the ISO image, and 
+    # installing the minimum packages necessary.
+    #
     # Estimated activation time depends on network download speed, but on a
-    # high speed connection is approximately 15 minutes.
-   
-   # restart the system (ensuring GUI properly accessible)
+    # high speed connection is approximately an hour.
+    # 
+    # Note: See First time updates required for the manual updates
+    # required at this point.
+    #
+    # restart the system (ensuring GUI properly accessible)
 vagrant halt
 vagrant up
 #+END_SRC
+
 * Testing Links:
+
+Assuming the setup has been executed correctly, the home page of the
+browser will be have been set to a customised [[*file://vagrant/homepage.html][*home page*]] giving links
+to all the tools which should now be accessible. 
 
 - Tomcat - http://localhost:8080/
 - Virtuoso Sparql Endpoint - http://localhost:1111/sparql
@@ -86,15 +149,28 @@ vagrant up
 - Plone  - http://localhost:8440/Plone
 - Elda   - http://localhost:8080/scoreboard
 
-All these should also be accessible viaL
+All these should also be accessible via
 
 - http://www.digital-agenda-data.eu 
 
-which will link to the local machine.
+which will link to the local machine. This can be verified by using a
+terminal and *ping www.digital-agenda-data.eu* and controlling that
+the host being accessed is localhost (127.0.0.1).
 
 * Problems
 - Virtuoso database permissions for CR3USER and CR3ROUSER need to be
-  updated via the conductor (giving them administration rights).
+  updated via the conductor (basically giving them both all rights possible,
+  administration, etc. /remember this machine should not accessible from 
+  the internet/).
 - cr-das.war is renamed as data.war so it matches the tomcat path
   required.
-- Test description not available.
+- Sometimes the browser will report an issue with the certificates and
+  ask whether an exception should be made (answer with yes, and
+  confirm it). Then refresh the page.
+- if the certificates have not been generated before starting the
+  building of the VM (i.e. the first vagrant up), there is a
+  possibility that the browser home page will not be set for the
+  vagrant user (because the pointers have already been cached when 
+  initially accessing the conductor).
+- the latest version of virtualbox (5.0.10) seems to have problems
+  with the guest additions getting tied up.
