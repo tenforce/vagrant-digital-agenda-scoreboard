@@ -47,6 +47,22 @@ install_libevent() {
 install_java() {
     yum -y install yum-priorities
     yum -y install java-1.6.0-openjdk java-1.6.0-openjdk-devel
+    if [ ! -f "/vagrant/jdk-6u43-linux-x64.bin" ]
+    then
+	echo "**********************************************************"
+	echo "**** jdk-6u43-linux-x64.bin needs to be downloaded   *****"
+	echo "**********************************************************"
+	exit -1;
+    else
+	if [ ! -d "/vagrant/jdk-6u43-linux-x64" ]
+	then
+	    pushd /vagrant ;
+	    ./jdk-6u43-linux-x64.bin
+	    popd
+	else
+	    echo "JDK 6.43 already downloaded and unpacked"
+	fi
+    fi
 }
 
 #########################################################################

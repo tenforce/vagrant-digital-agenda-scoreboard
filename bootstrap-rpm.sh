@@ -2,6 +2,16 @@
 #################################################################
 # Digital Agenda Score Board (build system requirements)
 
+if [ ! -f "/vagrant/jdk-6u43-linux-x64.bin" ]
+then
+    echo "**********************************************************"
+    echo "**** jdk-6u43-linux-x64.bin needs to be downloaded   *****"
+    echo "**** download it and run \"vagrant up --provision\"  *****"
+    echo "**********************************************************"
+    exit -1;
+fi
+
+#################################################################
 # yum -y --enablerepo rpmforge install dkms
 yum -y groupinstall "Development Tools"
 yum -y install gcc gcc-c++ gmake autoconf automake flex openssl git bzip2 make wget 
@@ -34,6 +44,14 @@ echo "**************************************"
    dos2unix scripts/*.in ;
    dos2unix config-files/* ;
    autoconf ; ./configure ;
+   if [ ! -f "jdk-6u43-linux-x64.bin" ]
+   then
+     echo "**********************************************************"
+     echo "**** jdk-6u43-linux-x64.bin needs to be downloaded   *****"
+     echo "**********************************************************"
+     exit -1;
+   fi
+   
    if [ -f "server.crt" ]
    then
      scripts/setup.sh

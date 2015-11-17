@@ -26,6 +26,7 @@ On the host machine:
 
   - install virtualbox and vagrant (See below)
   - check out this git repository,
+  - download jdk1.6.0_43 archive (See below)
   - create the certificates needed to install the software (See below)
   - vagrant up (See starting up vagrant below)
 
@@ -78,6 +79,16 @@ A simple appraoch to this is to use vagrant to start the VM, then in a
 terminal run through steps 1 thru 4, then run manually the
 scripts/setup.sh following this to build and install the software.
 
+** Install the jdk1.6.0_43
+
+Download [[http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html#jdk-6u43-oth-JPR][jdk_6u43-linux-x64.bin]] (accepting the license as required)
+and in the vagrant machine archive in the /vagrant directory. 
+
+#+BEGIN_QUOTE
+cd /vagrant
+./jdk-6u43-linux-x64.bin
+#+END_QUOTE
+
 ** Installation Setup
 The two main components to install are:
 
@@ -104,7 +115,7 @@ System Admin > User Accounts > cr3rouser > Edit
 
 Change the *Primary Role* to *dba* and in the account roles (move
 everything except the *nogroup* to the selected list). Then *save* the
-updates. The same should then be done for the *c3ruser* account.
+updates. The same should then be done for the *cr3user* account.
  
 Following this it is best to restart the VM (vagrant halt; vagrant up)
 so that the host names, etc. are correctly set.

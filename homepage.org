@@ -10,7 +10,7 @@ accessible:
 
 - [[http://www.digital-agenda-data.eu/][Digital Agenda Scoreboard (homepage)]]
 - [[http://www.digital-agenda-data.eu/data][Digital Agenda Scoreboard (data)]]
-- [[http://semantic.digital-agenda-data.eu/dataset/][Digital Agenda Scoreboard (elda)]]
+- [[http://semantic.digital-agenda-data.eu/dataset][Digital Agenda Scoreboard (elda)]]
 - [[http://localhost:1111/sparql][Virtuoso Sparql Endpoint]]
 - [[http://localhost:8890/][Virtuoso Conductor]]
 - Supervisor
@@ -92,6 +92,11 @@ usr/lib64/firefox/browser/defaults/preferences/all-redhat.js
 
   - Login : /dba/
   - Login : /dba/
+
+- [[http://localhost:8080/manager/html][Tomcat Manager]] ::
+
+  - Login : /tomcat/
+  - Login : /password/
 
 * Footnotes
 
